@@ -11,11 +11,11 @@ import Letter from "../../pages/Letters/Letter/Letter";
 export const AppContent = () => {
   return (
     <Routes>
+      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/registration" element={<RegistrationPage />} />
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<HomePage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/letters" element={<Letters />} />
         <Route path="/orders" element={<Orders />} />

@@ -15,31 +15,34 @@ const Footer = ({ is_staff }: { is_staff: boolean }) => {
             <ul className="nav">
               <li className="nav-item">
                 <CustomNavigateButton
-                  title="Заказы"
                   path="/orders"
                   type={EButtonTypes.BUTTON}
                   classname={`nav-link ${isActive("/orders") ? "active" : ""}`}
-                />
+                >
+                  Заказы
+                </CustomNavigateButton>
               </li>
               {is_staff && (
                 <li className="nav-item">
                   <CustomNavigateButton
-                    title="Каталог"
                     path="/catalog"
                     type={EButtonTypes.BUTTON}
                     classname={`nav-link ${
                       isActive("/catalog") ? "active" : ""
                     }`}
-                  />
+                  >
+                    Каталог
+                  </CustomNavigateButton>
                 </li>
               )}
               <li className="nav-item">
                 <CustomNavigateButton
-                  title="Реестр писем"
                   path="/letters"
                   type={EButtonTypes.BUTTON}
                   classname={`nav-link ${isActive("/letters") ? "active" : ""}`}
-                />
+                >
+                  Реестр писем
+                </CustomNavigateButton>
               </li>
             </ul>
           </nav>

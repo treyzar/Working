@@ -1,0 +1,166 @@
+.dt-hl {
+  background: #fff59d;       /* мягкий жёлтый, как на скрине */
+  padding: 0 .12em;
+  border-radius: 2px;
+}
+/* Контейнер формы в модалке */
+.edo-form {
+  --surface: var(--c-bg-100, #fff);
+  --surface-chrome: var(--c-bg-200, #f1f3f8);
+  --ink: var(--c-ink-800, #2f3235);
+  --muted: #8a9096;
+  --border: var(--border, #e1e5ea);
+  --ring: 0 0 0 3px rgba(231, 63, 12, .25); /* акцентный оранжевый */
+}
+
+/* Сетка формы */
+.edo-form .form-grid { display: grid; gap: 1rem; }
+@media (min-width: 992px) {
+  .edo-form .grid-2 { grid-template-columns: 1fr 1fr; gap: 1rem; }
+}
+
+/* Заголовок поля */
+.edo-form .field-label {
+  font-size: .95rem;
+  color: var(--ink);
+  margin-bottom: .35rem;
+}
+
+/* Обёртка инпута с иконкой */
+.edo-form .input-shell {
+  display: flex; align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 10px);
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+/* Левая зона с иконкой */
+.edo-form .input-icon {
+  width: 42px; min-width: 42px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+  background: var(--surface-chrome);
+  border-right: 1px solid var(--border);
+  border-top-left-radius: inherit; border-bottom-left-radius: inherit;
+}
+
+/* Сами элементы управления */
+.edo-form .input-shell input,
+.edo-form .input-shell select,
+.edo-form .input-shell textarea {
+  flex: 1; border: 0; outline: none; background: transparent;
+  padding: .55rem .75rem; font-size: 1rem; color: var(--ink);
+}
+.edo-form .input-shell textarea { min-height: 7rem; resize: vertical; }
+
+.edo-form .input-shell input::placeholder,
+.edo-form .input-shell textarea::placeholder { color: #a1a7ae; }
+
+/* Фокус */
+.edo-form .input-shell:focus-within {
+  border-color: var(--c-accent, #E73F0C);
+  box-shadow: var(--ring);
+}
+
+/* Хелп-текст */
+.edo-form .help {
+  margin-top: .35rem; font-size: .85rem; color: var(--muted);
+}
+
+/* Файлы — дропзона */
+.edo-form .dropzone {
+  background: var(--surface);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md, 10px);
+  padding: 2rem 1rem; text-align: center; color: var(--muted);
+}
+.edo-form .dropzone.is-dragover {
+  border-color: var(--c-accent, #E73F0C);
+  box-shadow: var(--ring);
+}
+
+.edo-form .form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Две колонки на десктопе, одна — на мобильных */
+.edo-form .grid-2 {
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+}
+@media (max-width: 991.98px) {
+  .edo-form .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Элемент, растягивающийся на обе колонки */
+.edo-form .col-span-2 {
+  grid-column: 1 / -1;
+}
+
+/* Чтоб поля не разъезжались по высоте */
+.edo-form .input-shell {
+  min-height: 44px;
+  border: 0.5px solid#d4d4d4;
+
+}
+.edo-form .input-icon svg {
+  width: 1.1rem; height: 1.1rem; flex-shrink: 0;
+}
+
+/* Dropzone */
+.edo-form .dropzone {
+  background: var(--c-bg-100, #fff);
+  border: 2px dashed var(--border, #e1e5ea);
+  border-radius: var(--radius-md, 10px);
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #7c8289;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  cursor: pointer;
+}
+.edo-form .dropzone.is-dragover {
+  border-color: var(--c-accent, #E73F0C);
+  box-shadow: 0 0 0 3px rgba(231,63,12,.2);
+}
+.edo-form .dropzone .dz-icon { display: flex; justify-content: center; margin-bottom: .5rem; font-size: 1.3rem; }
+.edo-form .dropzone .dz-hint { margin-top: .5rem; font-size: .85rem; color: #9aa0a6; }
+
+/* Список файлов */
+.edo-form .file-list { display: flex; flex-direction: column; gap: .5rem; margin-top: .75rem; }
+.edo-form .file-item {
+  display: flex; align-items: center; gap: .75rem;
+  background: var(--c-bg-100, #fff);
+  border: 1px solid var(--border, #e1e5ea);
+  border-radius: var(--radius-md, 10px);
+  padding: .6rem .75rem;
+}
+.edo-form .file-item.is-invalid { border-color: #dc3545; }
+.edo-form .file-icon {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: var(--c-bg-200, #f1f3f8);
+  display: grid; place-items: center; overflow: hidden; flex: 0 0 34px;
+}
+.edo-form .file-icon img { width: 100%; height: 100%; object-fit: cover; }
+.edo-form .file-info { flex: 1; min-width: 0; }
+.edo-form .file-name { font-weight: 500; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.edo-form .file-meta { font-size: .85rem; color: #7c8289; }
+.edo-form .file-error { color: #dc3545; }
+.edo-form .file-actions .btn-sm { padding: .25rem .4rem; }
+.edo-form .file-list {
+  max-height: clamp(160px, 30vh, 340px); /* высота-ограничитель */
+  overflow-y: auto;
+  padding-right: .25rem;                 /* чтобы не прилипал контент к скроллу */
+  scrollbar-gutter: stable both-edges;   /* не дёргать макет при появлении скролла */
+  -webkit-overflow-scrolling: touch;     /* плавный скролл на iOS */
+}
+
+/* опционально — стилизация полосы прокрутки */
+.edo-form .file-list::-webkit-scrollbar { width: 8px; }
+.edo-form .file-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.15); border-radius: 6px;
+}
+.edo-form .file-list::-webkit-scrollbar-track { background: transparent; }

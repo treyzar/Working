@@ -22,11 +22,13 @@ const HomePage = () => {
             </p>
             <CustomNavigateButton
               title="Поехали"
-              path="/login"
+              path="/letters"
               type={EButtonTypes.BUTTON}
-              classname="btn btn-primary btn-lg px-4 me-md-2"
+              classname="btn btn-accent btn-lg px-4 me-md-2"
               style={{ backgroundColor: "#E73F0C", borderColor: "#E73F0C" }}
-            />
+            >
+              Поехали
+            </CustomNavigateButton>
           </div>
           <div className="main__image">
             <LazyLoadImage

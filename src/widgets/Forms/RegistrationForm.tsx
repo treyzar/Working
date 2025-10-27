@@ -11,10 +11,9 @@ import {
 } from "../../shared/schemas/authorizaton/regSchema";
 import CustomInput from "../../shared/input/CustomInput";
 import GenderList from "../List/GenderList/gendersList";
-import apiClient from "../../shared/utils/services/response";
-import { useNavigate } from "react-router-dom";
 import bgImage from "../../images/login/login-bg-new.png";
 import "./RegistrationForm.scss";
+import { useRegister } from "../../features/authorization/registerAPI";
 
 const RegistrationForm = () => {
   const {
@@ -43,39 +42,9 @@ const RegistrationForm = () => {
     reValidateMode: "onChange",
   });
 
-  const register_url = import.meta.env.VITE_REG_URL;
-  const navigate = useNavigate();
-
+  const { registerUser, isPending } = useRegister(clearErrors, setError);
   const onSubmit = async (data: TRegSchema) => {
-    try {
-      const response = await apiClient.post(register_url, data);
-      if (response.status === 201) {
-        localStorage.setItem("access", response.data.tokens.access);
-        localStorage.setItem("refresh", response.data.tokens.refresh);
-        navigate("/");
-      }
-    } catch (error: any) {
-      clearErrors();
-      if (error.response?.status === 400) {
-        const backendErrors = error.response.data;
-
-        for (const [field, messages] of Object.entries(backendErrors)) {
-          if (field in regSchema.shape) {
-            if (Array.isArray(messages) && messages.length > 0) {
-              setError(field as keyof TRegSchema, {
-                type: "server",
-                message: messages[0],
-              });
-            }
-          } else {
-            setError("root.serverError", {
-              type: "server",
-              message: Array.isArray(messages) ? messages[0] : String(messages),
-            });
-          }
-        }
-      }
-    }
+    registerUser(data);
   };
 
   return (
@@ -290,13 +259,15 @@ const RegistrationForm = () => {
                 title="Зарегистрироваться"
                 type={EButtonTypes.SUBMIT}
                 classname="btn-primary"
+                disabled={isPending}
               />
               <CustomNavigateButton
-                title="Войти"
                 path="/login"
                 type={EButtonTypes.BUTTON}
                 classname="btn-outline-secondary"
-              />
+              >
+                Войти
+              </CustomNavigateButton>
             </div>
 
             <a href="#" className="forgot-pass">

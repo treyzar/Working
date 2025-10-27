@@ -1,0 +1,118 @@
+/* Базовые слои */
+.modal-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+}
+.modal-root {
+  position: fixed;
+  inset: 0;
+}
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 1;
+}
+.modal-panel {
+  position: absolute;
+  display: flex;
+  align-items: stretch;
+  pointer-events: none; /* чтобы клики ловила overlay, контент сам включим */
+}
+.modal-content {
+  background: var(--c-bg-100, #fff);
+  border-radius: var(--radius-md, 10px);
+  box-shadow: var(--shadow-md, 0 10px 30px rgba(0, 0, 0, 0.15));
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+/* ===== Центр-модалка ===== */
+.modal--center .modal-panel {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.modal--center .modal-content {
+  width: 36rem; /* базовая ширина, будет влиять и size-класс ниже */
+  max-width: min(90vw, 48rem);
+}
+.modal-panel .modal-sm .modal-content {
+  width: 28rem;
+}
+.modal-panel .modal-lg .modal-content {
+  width: 48rem;
+}
+.modal-panel .modal-xl .modal-content {
+  width: 64rem;
+}
+
+/* ===== Сайд-шиты ===== */
+.modal--left .modal-panel {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(0);
+}
+.modal--right .modal-panel {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  transform: translateX(0);
+}
+.modal--top .modal-panel {
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: translateY(0);
+}
+.modal--bottom.modal-root .modal-panel {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateY(0);
+}
+
+.modal--left .modal-content,
+.modal--right .modal-content {
+  height: 100%;
+  border-radius: 0;
+}
+.modal--top .modal-content,
+.modal--bottom .modal-content {
+  width: 100%;
+  border-radius: 0;
+}
+
+/* ===== Простейшие анимации появления ===== */
+.modal--center .modal-panel {
+  opacity: 0;
+  transform: translate(-50%, -48%) scale(0.98);
+}
+.modal--left .modal-content {
+  transform: translateX(-100%);
+}
+.modal--right .modal-content {
+  transform: translateX(100%);
+}
+.modal--top .modal-content {
+  transform: translateY(-100%);
+}
+.modal--bottom .modal-content {
+  transform: translateY(100%);
+}
+
+.modal-root .modal-content,
+.modal--center .modal-panel {
+  animation: modal-in 0.22s ease forwards;
+}
+@keyframes modal-in {
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
