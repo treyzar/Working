@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { logoutFn } from "../../shared/utils/services/auth/logout";
+import { logoutFn } from "../../shared/utils/services/auth/api/logout";
 import { useNavigate } from "react-router-dom";
 import {
   clearTokens,

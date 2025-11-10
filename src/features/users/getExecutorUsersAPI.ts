@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { getExecutorUsers } from "../../shared/utils/services/users/getExecutorUsers";
+import { getExecutorUsers } from "../../shared/utils/services/users/api/getExecutorUsers";
 import type { IExecutor } from "../../shared/interfaces/interfaces";
 
 export function useGetExecutorUsers(enabled = true) {

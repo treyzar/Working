@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import type { TRegSchema } from "../../shared/schemas/authorizaton/regSchema";
 import { regSchema } from "../../shared/schemas/authorizaton/regSchema";
-import { registerRequest } from "../../shared/utils/services/auth/register";
+import { registerRequest } from "../../shared/utils/services/auth/api/register";
 import {
   setAccessToken,
   setRefreshToken,

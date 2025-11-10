@@ -60,39 +60,55 @@ export interface IFormProps extends FormHTMLAttributes<HTMLFormElement> {
 
 export interface IUserProfile {
   id?: string | number;
-  first_name: string | undefined;
+  first_name: string;
   last_name: string;
   third_name: string;
-  username: string | undefined;
+  username: string;
   email: string;
   gender: string;
   birth_date: string;
-  phone: string;
-  company: string;
   post_job: string;
-  extension_number: string;
   departament: string;
   is_staff?: boolean;
+}
+
+export interface IUserRegisterPayload {
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  gender: "m" | "f";
+  post_job: string;
+  departament: string;
+  password: string;
+  password_confirm: string;
+  third_name?: string;
+  birth_date?: string;
+}
+export interface RegisterResponse {
+  status: { code: number; message: string };
+  user: IUserProfile;
+  tokens: { access: string; refresh: string };
 }
 
 type Maybe<T> = T | null | undefined;
 
 export interface IExecutor {
-  id: number; // делаем обязательным (упростит код)
+  id: number;
   username?: Maybe<string>;
   first_name?: Maybe<string>;
   last_name?: Maybe<string>;
   third_name?: Maybe<string>;
   email?: Maybe<string>;
   gender?: Maybe<string>;
-  birth_date?: Maybe<string>; // ISO-строка
+  birth_date?: Maybe<string>;
   phone?: Maybe<string>;
   company?: Maybe<string>;
   post_job?: Maybe<string>;
   extension_number?: Maybe<string>;
-  departament?: Maybe<string>; // если именно так приходит из API
+  departament?: Maybe<string>;
   is_staff?: Maybe<boolean>;
-  num_documents?: Maybe<number>; // если показываешь бейдж с количеством
+  num_documents?: Maybe<number>;
 }
 export interface ICards {
   title: string;
@@ -159,3 +175,28 @@ export type CreateLetterModalProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onCreated?: () => void;
 };
+
+export interface IFile {
+  id: number;
+  file: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+  uploaded_at: string;
+}
+
+export interface ILetter {
+  id: number;
+  document_number: string;
+  date: string;
+  recipient: string;
+  theme: string;
+  executor: IExecutor;
+  note: string;
+  files: IFile[];
+  links: {
+    self: string;
+    history: string;
+    files: string;
+  };
+}

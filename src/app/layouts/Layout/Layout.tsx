@@ -10,6 +10,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     location.pathname === "/login" || location.pathname === "/registration";
 
   const { data: userProfile } = useProfile({ enabled: !isAuthPage });
+
   return (
     <div className="app-wrapper">
       {!isAuthPage && (

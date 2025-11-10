@@ -7,11 +7,10 @@ import {
 import type { TAuthSchema } from "../../shared/schemas/authorizaton/authSchema";
 import { loginSchema } from "../../shared/schemas/authorizaton/authSchema";
 import type { SetErrorFn } from "../../shared/types/types";
-import { loginFn } from "../../shared/utils/services/auth/login";
+import { loginFn } from "../../shared/utils/services/auth/api/login";
 
 export const useLogin = (clearErrors: () => void, setError: SetErrorFn) => {
   const navigate = useNavigate();
-
   const mutation = useMutation({
     mutationKey: ["auth", "login"],
     mutationFn: async (values: TAuthSchema) => loginFn(values),

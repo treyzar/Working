@@ -12,13 +12,13 @@ export const regSchema = z
       .min(1, "Обязательное поле.")
       .email("Введите правильный адрес электронной почты."),
 
-    name: z.string(),
-    surname: z.string(),
-    middle_name: z.string().optional(),
-    gender: z.enum(["male", "female"], {
-      message: "Пол должен быть 'male' или 'female'",
+    first_name: z.string(),
+    last_name: z.string(),
+    third_name: z.string().optional(),
+    gender: z.enum(["m", "f"], {
+      message: "Пол должен быть 'm' или 'f'",
     }),
-    date: z
+    birth_date: z
       .string()
       .optional()
       .or(z.literal(""))
@@ -37,8 +37,8 @@ export const regSchema = z
           message: "Некорректная дата. Используйте формат ГГГГ-ММ-ДД",
         }
       ),
-    position: z.string(),
-    department: z.string(),
+    post_job: z.string(),
+    departament: z.string(),
     password: z
       .string()
       .min(1, "Обязательное поле.")

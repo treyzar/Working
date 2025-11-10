@@ -12,8 +12,8 @@ const GenderList = forwardRef<HTMLSelectElement, IGenderListProps>(
         onBlur={onBlur}
         className="form-control gender-select"
       >
-        <option value="male">Мужчина</option>
-        <option value="female">Женщина</option>
+        <option value="m">Мужчина</option>
+        <option value="f">Женщина</option>
       </select>
     );
   }

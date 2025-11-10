@@ -5,13 +5,25 @@ import type {
   AppRoute,
   IUserMenuProps,
 } from "../../shared/interfaces/interfaces";
-import { getAccessToken } from "../../shared/utils/services/response";
 import "./Header.scss";
+import CustomNavigateButton from "../../shared/button/CustomNavigateButton";
+import { useProfile } from "../../features/authorization/profileAPI";
 
 const Header = ({ first_name, username, is_staff }: IUserMenuProps) => {
   const location = useLocation();
   const isActive = (path: AppRoute) => location.pathname === path;
-  const isAuth = getAccessToken();
+
+  const {
+    data: profile,
+    isLoading,
+    isFetching,
+  } = useProfile({ enabled: true });
+
+  const isAuthenticated = !!profile || isLoading || isFetching;
+
+  const uiFirstName = (profile?.first_name ?? first_name) || "";
+  const uiUsername = (profile?.username ?? username) || "";
+  const uiIsStaff = (profile?.is_staff ?? is_staff) || false;
 
   return (
     <div className="header-wrap">
@@ -31,7 +43,8 @@ const Header = ({ first_name, username, is_staff }: IUserMenuProps) => {
                   Заказы
                 </Link>
               </li>
-              {is_staff && (
+
+              {uiIsStaff && (
                 <li className="nav-item">
                   <Link
                     to="/catalog"
@@ -43,6 +56,7 @@ const Header = ({ first_name, username, is_staff }: IUserMenuProps) => {
                   </Link>
                 </li>
               )}
+
               <li className="nav-item">
                 <Link
                   to="/letters"
@@ -55,16 +69,24 @@ const Header = ({ first_name, username, is_staff }: IUserMenuProps) => {
           </nav>
 
           <div className="app-header__user">
-            {isAuth ? (
-              <UserMenu first_name={first_name} username={username} />
+            {isAuthenticated ? (
+              <UserMenu first_name={uiFirstName} username={uiUsername} />
             ) : (
-              <div>
-                <Link to="/login" className="btn btn-primary">
+              <div className="d-flex gap-2">
+                <CustomNavigateButton
+                  path="/login"
+                  classname="btn btn-primary btn-login"
+                  type="button"
+                >
                   Войти
-                </Link>
-                <Link to={"/registration"} className="btn btn-secondary">
+                </CustomNavigateButton>
+                <CustomNavigateButton
+                  path="/registration"
+                  classname="btn btn-secondary btn-register"
+                  type="button"
+                >
                   Зарегистрироваться
-                </Link>
+                </CustomNavigateButton>
               </div>
             )}
           </div>
