@@ -1,10 +1,10 @@
-import type { TAuthSchema } from "../schemas/authorizaton/authSchema";
+import type { TAuthSchema } from "./schemas/authorizaton/authSchema";
 import type {
   FieldValues,
   FieldPath,
   UseFormClearErrors,
 } from "react-hook-form";
-import type { ILetter, IFile } from "../interfaces/interfaces";
+import type { ILetter, IFile } from "./interfaces/interfaces";
 export type SetErrorFn = (
   name: keyof TAuthSchema | "root.serverError",
   error: { type: string; message?: string }

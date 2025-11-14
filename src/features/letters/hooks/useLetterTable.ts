@@ -5,7 +5,7 @@ import DataTable from "datatables.net-dt";
 import Mark from "mark.js";
 import type { MutableRefObject } from "react";
 import type { NavigateFunction } from "react-router-dom";
-import { LettersTableSettings } from "../../../pages/Letters/constants";
+import { LettersTableSettings } from "../../../pages/letters/constants";
 
 DataTable.use(DT);
 

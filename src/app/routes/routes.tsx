@@ -1,10 +1,10 @@
-import LoginPage from "../../pages/Authorization/Login/LoginPage";
-import Profile from "../../pages/Authorization/Profile/Profile";
-import RegistrationPage from "../../pages/Authorization/Registration/RegistrationPage";
-import HomePage from "../../pages/HomePage/HomePage";
-import NotFound from "../../pages/NotFound/NotFound";
-import TestPage from "../../pages/TestPage/TestPage";
-import type { IPath } from "../../shared/interfaces/interfaces";
+import LoginPage from "@pages/authorization/Login/LoginPage";
+import Profile from "@pages/authorization/Profile/Profile";
+import RegistrationPage from "@pages/authorization/Registration/RegistrationPage";
+import HomePage from "@pages/home/HomePage";
+import NotFound from "@pages/not-found/NotFound";
+import TestPage from "@pages/test/TestPage";
+import type { IPath } from "@shared/types/interfaces/interfaces";
 
 export const routes: IPath[] = [
   { path: "/login", element: <LoginPage /> },

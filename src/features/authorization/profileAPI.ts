@@ -4,9 +4,9 @@ import type { AxiosError } from "axios";
 import apiClient, {
   getAccessToken,
   normalizeProfile,
-} from "../../shared/utils/services/response";
-import { isAuthPath } from "../../shared/utils/services/helpers/authHelpers";
-import type { IUserProfile } from "../../shared/interfaces/interfaces";
+} from "@shared/api/response";
+import { isAuthPath } from "@shared/lib/utils/services/helpers/authHelpers";
+import type { IUserProfile } from "@shared/types/interfaces/interfaces";
 
 type RawProfile = IUserProfile | { user: IUserProfile };
 

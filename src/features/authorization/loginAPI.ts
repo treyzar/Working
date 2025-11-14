@@ -1,13 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import {
-  setAccessToken,
-  setRefreshToken,
-} from "../../shared/utils/services/response";
-import type { TAuthSchema } from "../../shared/schemas/authorizaton/authSchema";
-import { loginSchema } from "../../shared/schemas/authorizaton/authSchema";
-import type { SetErrorFn } from "../../shared/types/types";
-import { loginFn } from "../../shared/utils/services/auth/api/login";
+import { setAccessToken, setRefreshToken } from "@shared/api/response";
+import type { TAuthSchema } from "@shared/types/schemas/authorizaton/authSchema";
+import { loginSchema } from "@shared/types/schemas/authorizaton/authSchema";
+import type { SetErrorFn } from "@shared/types/types";
+import { loginFn } from "@shared/api/login";
 
 export const useLogin = (clearErrors: () => void, setError: SetErrorFn) => {
   const navigate = useNavigate();

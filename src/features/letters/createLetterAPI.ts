@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createLetterRequest } from "../../shared/utils/services/letters/api/createLetter";
-import type { TLetterForm } from "../../shared/schemas/letters/addLetterSchema";
+import { createLetterRequest } from "../../shared/api/createLetter";
+import type { TLetterForm } from "../../shared/types/schemas/letters/addLetterSchema";
 
 export function useCreateLetter() {
   const qc = useQueryClient();

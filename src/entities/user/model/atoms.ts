@@ -1,5 +1,5 @@
 import { atom, createStore } from "jotai";
-import type { IUserProfile } from "../../../shared/interfaces/interfaces";
+import type { IUserProfile } from "@shared/interfaces/interfaces";
 
 export const userStore = createStore();
 export const userAtom = atom<IUserProfile | null>(null);

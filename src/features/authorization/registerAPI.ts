@@ -1,14 +1,11 @@
 // features/authorization/useRegister.ts
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import type { TRegSchema } from "../../shared/schemas/authorizaton/regSchema";
-import { regSchema } from "../../shared/schemas/authorizaton/regSchema";
-import { registerRequest } from "../../shared/utils/services/auth/api/register";
-import {
-  setAccessToken,
-  setRefreshToken,
-} from "../../shared/utils/services/response";
-import type { ClearErrorsFn, SetErrorFnReg } from "../../shared/types/types";
+import type { TRegSchema } from "@shared/types/schemas/authorizaton/regSchema";
+import { regSchema } from "@shared/types/schemas/authorizaton/regSchema";
+import { registerRequest } from "@shared/api/register";
+import { setAccessToken, setRefreshToken } from "@shared/api/response";
+import type { ClearErrorsFn, SetErrorFnReg } from "@shared/types/types";
 
 export function useRegister(
   clearErrors: ClearErrorsFn<TRegSchema>,

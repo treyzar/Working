@@ -1,14 +1,14 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "../../pages/Authorization/Login/LoginPage";
-import RegistrationPage from "../../pages/Authorization/Registration/RegistrationPage";
-import HomePage from "../../pages/HomePage/HomePage";
-import Profile from "../../pages/Authorization/Profile/Profile";
-import Letters from "../../pages/Letters/Letters";
-import Orders from "../../pages/Orders/Orders";
+import LoginPage from "@pages/authorization/Login/LoginPage";
+import RegistrationPage from "@pages/authorization/Registration/RegistrationPage";
+import HomePage from "@pages/home/HomePage";
+import Profile from "@pages/authorization/Profile/Profile";
+import Letters from "@pages/letters/Letters";
+import Orders from "@pages/orders/Orders";
 import ProtectedRoute from "../components/ProtectedRoute";
-import Catalog from "../../pages/Catalog/Catalog";
-import Letter from "../../pages/Letter/Letter";
-import TestPage from "../../pages/TestPage/TestPage";
+import Catalog from "@pages/catalog/Catalog";
+import Letter from "@pages/letter/Letter";
+import TestPage from "@/pages/test/TestPage";
 export const AppContent = () => {
   return (
     <Routes>

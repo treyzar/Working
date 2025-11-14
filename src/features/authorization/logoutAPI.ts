@@ -1,10 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { logoutFn } from "../../shared/utils/services/auth/api/logout";
+import { logoutFn } from "@shared/utils/services/auth/api/logout";
 import { useNavigate } from "react-router-dom";
-import {
-  clearTokens,
-  getRefreshToken,
-} from "../../shared/utils/services/response";
+import { clearTokens, getRefreshToken } from "@shared/utils/services/response";
 
 export const useLogout = () => {
   const navigate = useNavigate();

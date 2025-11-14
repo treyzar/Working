@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGetLetter } from "./getLetterAPI";
-import type { ILetter, IFile } from "../../shared/interfaces/interfaces";
+import type { ILetter, IFile } from "../../shared/types/interfaces/interfaces";
 
 export function useLetterDetails(id?: string) {
   const { data, isLoading, refetch, isFetching } = useGetLetter(id);
