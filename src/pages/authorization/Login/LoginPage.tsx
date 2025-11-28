@@ -1,5 +1,5 @@
-import bgImage from "../../../shared/assets/images/login/login-bg-new.png";
-import LoginForm from "../../../widgets/forms/Authorization/LoginForm";
+import bgImage from "@shared/assets/images/login/login-bg-new.png";
+import LoginForm from "@widgets/forms/Authorization/LoginForm";
 import "./LoginPage.scss";
 
 const LoginPage = () => {

@@ -1,8 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 import { FiArrowLeft, FiRefreshCw } from "react-icons/fi";
-import { buildCards } from "../../widgets/card/Letters/BuildCards/buildCards";
-import { CardRenderer } from "../../widgets/card/Letters/Render/CardRender";
-import { useLetterDetails } from "../../features/letters/useLetterDetails";
+import { buildCards } from "@widgets/card/Letters/BuildCards/buildCards";
+import { CardRenderer } from "@widgets/card/Letters/Render/CardRender";
+import { useLetterDetails } from "@features/letters/useLetterDetails";
 export default function LetterDetails() {
   const { id } = useParams<{ id: string }>();
   const { letter, files, createdDate, isLoading, isFetching, refetch } =

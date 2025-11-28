@@ -4,7 +4,7 @@ import type {
   DtServerParams,
   DocumentRow,
   DataTableResponse,
-} from "../../shared/interfaces/interfaces";
+} from "@shared/types/interfaces/interfaces";
 import $ from "jquery";
 import { FaCopy } from "react-icons/fa6";
 import { renderToStaticMarkup } from "react-dom/server";

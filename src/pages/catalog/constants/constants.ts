@@ -1,4 +1,4 @@
-import type { ICards } from "../../../shared/interfaces/interfaces";
+import type { ICards } from "@shared/types/interfaces/interfaces";
 
 export const catalogItems: ICards[] = [
   {

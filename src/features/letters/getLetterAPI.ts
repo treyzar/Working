@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { getLetter } from "../../shared/api/getLetter";
+import { getLetter } from "@shared/api/getLetter";
 
 export const useGetLetter = (id?: string) =>
   useQuery<unknown, AxiosError>({

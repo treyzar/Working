@@ -8,6 +8,7 @@ import {
   installAuthInterceptor,
 } from "../shared/api/response";
 import { useEffect, useMemo } from "react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const App = () => {
   const queryClient = useMemo(() => new QueryClient(), []);
@@ -21,14 +22,16 @@ const App = () => {
   }, [queryClient]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Layout>
-          <AppContent />
-        </Layout>
-      </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <TooltipProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Layout>
+            <AppContent />
+          </Layout>
+        </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </TooltipProvider>
   );
 };
 
