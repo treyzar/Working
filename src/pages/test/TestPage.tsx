@@ -456,7 +456,7 @@ export default function EditorPage() {
       <header className="flex items-center gap-4 px-4 py-2 border-b bg-card">
         <div className="flex items-center gap-2">
           <FileText className="h-6 w-6 text-primary" />
-          <span className="font-semibold text-lg">DocuParse</span>
+          <span className="font-semibold text-lg">BrelserParse</span>
         </div>
         <Input
           value={templateTitle}
