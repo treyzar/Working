@@ -1,6 +1,5 @@
 import type { JSX } from "react";
-import type { TRegSchema } from "../types/schemas/authorizaton/regSchema";
-import type { TAuthSchema } from "../types/schemas/authorizaton/authSchema";
+import type { TRegSchema, TAuthSchema } from "@shared/types";
 import type { FormHTMLAttributes, ReactNode } from "react";
 import type React from "react";
 export interface ILoginFormProps {
@@ -38,6 +37,7 @@ export interface IGenderListProps {
   value?: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
+  className?: string;
 }
 
 export interface IPath {

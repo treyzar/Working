@@ -1,9 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Form from "@shared/ui/forms/Form";
-import CustomInput from "@shared/ui/input/CustomInput";
-import CustomButton from "@shared/ui/button/CustomButton";
-import CustomNavigateButton from "@shared/ui/button/CustomNavigateButton";
+
 import { EButtonTypes, EInputTypes } from "@shared/config/enums/enums";
 import {
   loginSchema,
@@ -11,6 +9,10 @@ import {
 } from "@shared/types/schemas/authorizaton/authSchema";
 import { useLogin } from "@features/authorization/loginAPI";
 import "./LoginForm.scss";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const {
@@ -27,7 +29,7 @@ const LoginForm = () => {
   });
 
   const { login, isPending } = useLogin(clearErrors, setError);
-
+  const navigate = useNavigate();
   const onSubmit = (data: TAuthSchema) => {
     login(data);
   };
@@ -41,10 +43,10 @@ const LoginForm = () => {
       )}
 
       <Form classname="login-form" onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="username">Имя пользователя*</label>
-        <CustomInput
+        <Label htmlFor="username">Имя пользователя*</Label>
+        <Input
           type={EInputTypes.TEXT}
-          classname="form-control"
+          className="form-control"
           id="username"
           {...register("username")}
         />
@@ -53,9 +55,9 @@ const LoginForm = () => {
         )}
 
         <label htmlFor="password">Пароль*</label>
-        <CustomInput
+        <Input
           type={EInputTypes.PASSWORD}
-          classname="form-control"
+          className="form-control"
           id="password"
           {...register("password")}
         />
@@ -64,25 +66,25 @@ const LoginForm = () => {
         )}
 
         <div className="action-buttons">
-          <CustomButton
-            title="Войти"
+          <Button
+            style={{ backgroundColor: "#e8450e" }}
             type={EButtonTypes.SUBMIT}
-            classname="btn-primary"
+            className="btn-primary bg-orange-600 text-white"
             disabled={isPending}
-          />
-          <CustomNavigateButton
-            title="Регистрация"
-            path="/registration"
+          >
+            Войти
+          </Button>
+          <Button
+            onClick={() => navigate("/registration")}
             type={EButtonTypes.BUTTON}
-            classname="btn-outline-secondary"
+            className="btn-outline-secondary bg-white text-gray-500"
           >
             Регистрация
-          </CustomNavigateButton>
+          </Button>
         </div>
-
-        <a href="#" className="forgot-pass">
+        <Link to="/forgot-password" className="forgot-pass">
           Забыли пароль?
-        </a>
+        </Link>
       </Form>
     </div>
   );

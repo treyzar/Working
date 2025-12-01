@@ -1,13 +1,7 @@
-import { useState } from "react";
-import { useEditorStore } from "@/entities/docs/store/store";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { useState } from 'react';
+import { useEditorStore } from '@/entities/docs';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import {
   Type,
   Image,
@@ -15,14 +9,16 @@ import {
   Undo2,
   Redo2,
   Save,
+  Download,
   FileText,
   Menu,
+  Plus,
   HelpCircle,
   BookOpen,
   Settings,
   Trash2,
   File,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface MobileToolbarProps {
   onSave: () => void;
@@ -59,9 +55,9 @@ export function MobileToolbar({
 
   const handleDelete = () => {
     if (!selectedId) return;
-    if (selectedType === "field") {
+    if (selectedType === 'field') {
       removeField(selectedId);
-    } else if (selectedType === "table") {
+    } else if (selectedType === 'table') {
       removeTable(selectedId);
     }
   };
@@ -77,7 +73,7 @@ export function MobileToolbar({
       <div className="fixed bottom-20 right-4 z-40 flex flex-col gap-2">
         <Button
           size="lg"
-          className="h-14 w-14 rounded-full shadow-lg"
+          className="h-14 w-14 rounded-full shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 border-orange-600 text-white"
           onClick={addTextField}
           data-testid="fab-add-text"
         >
@@ -86,7 +82,7 @@ export function MobileToolbar({
       </div>
 
       {/* Bottom toolbar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-card-border safe-area-inset-bottom">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border-t-2 border-orange-200 dark:border-orange-800 safe-area-inset-bottom">
         <div className="flex items-center justify-around p-2">
           <Button
             size="lg"
@@ -134,9 +130,7 @@ export function MobileToolbar({
             data-testid="mobile-button-save"
           >
             <Save className="h-5 w-5" />
-            <span className="text-[10px]">
-              {isSaving ? "..." : "Сохранить"}
-            </span>
+            <span className="text-[10px]">{isSaving ? '...' : 'Сохранить'}</span>
           </Button>
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -229,15 +223,11 @@ export function MobileToolbar({
                 <Button
                   variant="outline"
                   className="flex flex-col items-center gap-2 h-auto py-4"
-                  onClick={() =>
-                    handleAction(() => setSimpleMode(!isSimpleMode))
-                  }
+                  onClick={() => handleAction(() => setSimpleMode(!isSimpleMode))}
                   data-testid="mobile-menu-mode"
                 >
                   <Settings className="h-6 w-6" />
-                  <span className="text-xs">
-                    {isSimpleMode ? "Простой" : "Полный"}
-                  </span>
+                  <span className="text-xs">{isSimpleMode ? 'Простой' : 'Полный'}</span>
                 </Button>
               </div>
             </SheetContent>

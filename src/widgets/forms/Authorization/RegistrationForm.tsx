@@ -2,10 +2,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import Form from "@shared/ui/forms/Form";
-import CustomInput from "@shared/ui/input/CustomInput";
-import CustomButton from "@shared/ui/button/CustomButton";
-import CustomNavigateButton from "@shared/ui/button/CustomNavigateButton";
 import { EButtonTypes } from "@shared/config/enums/enums";
+import { Link, useNavigate } from "react-router-dom";
 
 import GenderList from "@widgets/list/GenderList/gendersList";
 
@@ -16,6 +14,9 @@ import {
 import { useRegister } from "@features/authorization/registerAPI";
 
 import "./RegistrationForm.scss";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/button";
 
 const RegistrationForm = () => {
   const {
@@ -44,7 +45,7 @@ const RegistrationForm = () => {
     },
   });
   const { registerUser, isPending } = useRegister(clearErrors, setError);
-
+  const navigate = useNavigate();
   const onSubmit = (data: TRegSchema) => {
     registerUser(data);
   };
@@ -60,11 +61,11 @@ const RegistrationForm = () => {
       <Form classname="registration-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="username">Имя пользователя*</label>
-            <CustomInput
+            <Label htmlFor="username">Имя пользователя*</Label>
+            <Input
               id="username"
               type="text"
-              classname="form-control"
+              className="form-control"
               {...register("username")}
             />
             {errors.username && (
@@ -77,11 +78,11 @@ const RegistrationForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Электронная почта*</label>
-            <CustomInput
+            <Label htmlFor="email">Электронная почта*</Label>
+            <Input
               id="email"
               type="email"
-              classname="form-control"
+              className="form-control"
               {...register("email")}
             />
             {errors.email && (
@@ -92,11 +93,11 @@ const RegistrationForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="name">Имя</label>
-            <CustomInput
+            <Label htmlFor="name">Имя</Label>
+            <Input
               id="name"
               type="text"
-              classname="form-control"
+              className="form-control"
               {...register("first_name")}
             />
             {errors.first_name && (
@@ -105,11 +106,11 @@ const RegistrationForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="surname">Фамилия</label>
-            <CustomInput
+            <Label htmlFor="surname">Фамилия</Label>
+            <Input
               id="surname"
               type="text"
-              classname="form-control"
+              className="form-control"
               {...register("last_name")}
             />
             {errors.last_name && (
@@ -120,11 +121,11 @@ const RegistrationForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="middle_name">Отчество</label>
-            <CustomInput
+            <Label htmlFor="middle_name">Отчество</Label>
+            <Input
               id="middle_name"
               type="text"
-              classname="form-control"
+              className="form-control"
               {...register("third_name")}
             />
             {errors.third_name && (
@@ -133,7 +134,7 @@ const RegistrationForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="gender">Пол</label>
+            <Label htmlFor="gender">Пол</Label>
             <Controller
               name="gender"
               control={control}
@@ -143,6 +144,7 @@ const RegistrationForm = () => {
                   onChange={field.onChange}
                   onBlur={field.onBlur}
                   ref={field.ref}
+                  className="form-control"
                 />
               )}
             />
@@ -154,11 +156,11 @@ const RegistrationForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="date">Дата рождения</label>
-            <CustomInput
+            <Label htmlFor="date">Дата рождения</Label>
+            <Input
               id="date"
               type="text"
-              classname="form-control"
+              className="form-control"
               {...register("birth_date")}
             />
             <span className="hint">YYYY-MM-DD</span>
@@ -168,11 +170,11 @@ const RegistrationForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="position">Должность</label>
-            <CustomInput
+            <Label htmlFor="position">Должность</Label>
+            <Input
               id="position"
               type="text"
-              classname="form-control"
+              className="form-control"
               {...register("post_job")}
             />
             {errors.post_job && (
@@ -183,11 +185,11 @@ const RegistrationForm = () => {
 
         <div className="form-row full-width">
           <div className="form-group">
-            <label htmlFor="department">Подразделение</label>
-            <CustomInput
+            <Label htmlFor="department">Подразделение</Label>
+            <Input
               id="department"
               type="text"
-              classname="form-control"
+              className="form-control"
               {...register("departament")}
             />
             {errors.departament && (
@@ -198,11 +200,11 @@ const RegistrationForm = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="password">Пароль*</label>
-            <CustomInput
+            <Label htmlFor="password">Пароль*</Label>
+            <Input
               id="password"
               type="password"
-              classname="form-control"
+              className="form-control"
               {...register("password")}
             />
             {errors.password && (
@@ -220,11 +222,11 @@ const RegistrationForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password_confirm">Подтверждение пароля*</label>
-            <CustomInput
+            <Label htmlFor="password_confirm">Подтверждение пароля*</Label>
+            <Input
               id="password_confirm"
               type="password"
-              classname="form-control"
+              className="form-control"
               {...register("password_confirm")}
             />
             {errors.password_confirm && (
@@ -239,24 +241,25 @@ const RegistrationForm = () => {
         </div>
 
         <div className="action-buttons">
-          <CustomButton
-            title="Зарегистрироваться"
+          <Button
             type={EButtonTypes.SUBMIT}
-            classname="btn-primary"
+            className="btn-primary"
             disabled={isPending}
-          />
-          <CustomNavigateButton
-            path="/login"
+          >
+            Зарегистрироваться
+          </Button>
+          <Button
+            onClick={() => navigate("/login")}
             type={EButtonTypes.BUTTON}
-            classname="btn-outline-secondary"
+            className="btn-outline-secondary"
           >
             Войти
-          </CustomNavigateButton>
+          </Button>
         </div>
 
-        <a href="#" className="forgot-pass">
+        <Link to="/forgot-password" className="forgot-pass">
           Забыли пароль?
-        </a>
+        </Link>
       </Form>
     </div>
   );

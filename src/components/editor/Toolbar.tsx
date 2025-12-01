@@ -1,10 +1,6 @@
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useEditorStore } from "@/entities/docs/store/store";
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useEditorStore } from '@/entities/docs';
 import {
   Type,
   Image,
@@ -18,7 +14,8 @@ import {
   BookOpen,
   Settings,
   Trash2,
-} from "lucide-react";
+  Plus,
+} from 'lucide-react';
 
 interface ToolbarProps {
   onSave: () => void;
@@ -54,15 +51,15 @@ export function Toolbar({
 
   const handleDelete = () => {
     if (!selectedId) return;
-    if (selectedType === "field") {
+    if (selectedType === 'field') {
       removeField(selectedId);
-    } else if (selectedType === "table") {
+    } else if (selectedType === 'table') {
       removeTable(selectedId);
     }
   };
 
   return (
-    <div className="flex items-center gap-2 p-3 bg-card border-b border-card-border">
+    <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-b-2 border-orange-200 dark:border-orange-800/50">
       <div className="flex items-center gap-1 mr-4">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -94,12 +91,7 @@ export function Toolbar({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={addTable}
-              data-testid="button-add-table"
-            >
+            <Button size="icon" variant="ghost" onClick={addTable} data-testid="button-add-table">
               <Table2 className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
@@ -107,7 +99,7 @@ export function Toolbar({
         </Tooltip>
       </div>
 
-      <div className="h-6 w-px bg-border mx-2" />
+      <div className="h-6 w-px bg-orange-200 dark:bg-orange-700 mx-2" />
 
       <div className="flex items-center gap-1">
         <Tooltip>
@@ -193,23 +185,21 @@ export function Toolbar({
           <TooltipTrigger asChild>
             <Button
               size="sm"
-              variant={isSimpleMode ? "secondary" : "outline"}
+              variant={isSimpleMode ? 'secondary' : 'outline'}
               onClick={() => setSimpleMode(!isSimpleMode)}
               data-testid="button-toggle-mode"
             >
               <Settings className="h-4 w-4 mr-2" />
-              {isSimpleMode ? "Простой" : "Расширенный"}
+              {isSimpleMode ? 'Простой' : 'Расширенный'}
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {isSimpleMode
-              ? "Переключить на расширенный режим"
-              : "Переключить на простой режим"}
+            {isSimpleMode ? 'Переключить на расширенный режим' : 'Переключить на простой режим'}
           </TooltipContent>
         </Tooltip>
       </div>
 
-      <div className="h-6 w-px bg-border mx-2" />
+      <div className="h-6 w-px bg-orange-200 dark:bg-orange-700 mx-2" />
 
       <div className="flex items-center gap-2">
         <Button
@@ -232,14 +222,9 @@ export function Toolbar({
           DOCX
         </Button>
 
-        <Button
-          size="sm"
-          onClick={onSave}
-          disabled={isSaving}
-          data-testid="button-save"
-        >
+        <Button size="sm" onClick={onSave} disabled={isSaving} data-testid="button-save">
           <Save className="h-4 w-4 mr-2" />
-          {isSaving ? "Сохранение..." : "Сохранить"}
+          {isSaving ? 'Сохранение...' : 'Сохранить'}
         </Button>
       </div>
     </div>

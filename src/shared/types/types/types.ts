@@ -1,18 +1,18 @@
-import type { TAuthSchema } from "./schemas/authorizaton/authSchema";
+import type { TAuthSchema } from "@shared/types";
 import type {
   FieldValues,
   FieldPath,
   UseFormClearErrors,
 } from "react-hook-form";
-import type { ILetter, IFile } from "./interfaces/interfaces";
+import type { ILetter, IFile } from "@shared/types";
 export type SetErrorFn = (
-  name: keyof TAuthSchema | "root.serverError",
-  error: { type: string; message?: string }
+  name: keyof TAuthSchema,
+  error: { type: string; message?: string },
 ) => void;
 
 export type SetErrorFnReg<T extends FieldValues> = (
   name: FieldPath<T> | `root.${string}`,
-  error: { type: string; message?: string }
+  error: { type: string; message?: string },
 ) => void;
 
 export type CardPropsBase = { key: string; hide?: boolean };

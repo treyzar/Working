@@ -1,8 +1,7 @@
-import { useRef, useCallback } from "react";
-import { useEditorStore } from "@/entities/docs/store/store";
-import type { Field, TableItem } from "@shared/schema";
-import { PAGE_W, PAGE_H, SAFE_MARGIN, GRID } from "@shared/schema";
-import { cn } from "@/lib/utils";
+import { useRef, useCallback } from 'react';
+import { useEditorStore } from '@/entities/docs';
+import { PAGE_W, PAGE_H, SAFE_MARGIN, GRID, type Field, type TableItem } from '@shared/types';
+import { cn } from '@/lib/utils';
 
 const SNAP_THRESHOLD = 5;
 
@@ -35,7 +34,7 @@ export function Canvas({ scale = 1 }: CanvasProps) {
   const pageRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef<{
     id: string;
-    type: "field" | "table";
+    type: 'field' | 'table';
     startX: number;
     startY: number;
     origX: number;
@@ -48,7 +47,7 @@ export function Canvas({ scale = 1 }: CanvasProps) {
   const findSnapPoints = useCallback(
     (
       currentItem: { x: number; y: number; w: number; h: number },
-      otherItems: { x: number; y: number; w: number; h: number; id: string }[],
+      otherItems: { x: number; y: number; w: number; h: number; id: string }[]
     ) => {
       const snapGuides: { vertical: number[]; horizontal: number[] } = {
         vertical: [],
@@ -126,21 +125,21 @@ export function Canvas({ scale = 1 }: CanvasProps) {
 
       return { x: snapX, y: snapY, guides: snapGuides };
     },
-    [],
+    []
   );
 
   const onMouseDownBox = useCallback(
     (
       e: React.MouseEvent | React.TouchEvent,
       item: Field | TableItem,
-      itemType: "field" | "table",
-      resizing: boolean,
+      itemType: 'field' | 'table',
+      resizing: boolean
     ) => {
       e.preventDefault();
       e.stopPropagation();
 
-      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-      const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
 
       draggingRef.current = {
         id: item.id,
@@ -156,14 +155,12 @@ export function Canvas({ scale = 1 }: CanvasProps) {
 
       selectItem(item.id, itemType);
 
-      document.addEventListener("mousemove", onMouseMoveDoc);
-      document.addEventListener("mouseup", onMouseUpDoc, { once: true });
-      document.addEventListener("touchmove", onTouchMoveDoc, {
-        passive: false,
-      });
-      document.addEventListener("touchend", onTouchEndDoc, { once: true });
+      document.addEventListener('mousemove', onMouseMoveDoc);
+      document.addEventListener('mouseup', onMouseUpDoc, { once: true });
+      document.addEventListener('touchmove', onTouchMoveDoc, { passive: false });
+      document.addEventListener('touchend', onTouchEndDoc, { once: true });
     },
-    [selectItem],
+    [selectItem]
   );
 
   const onMouseMoveDoc = useCallback((e: MouseEvent) => {
@@ -185,8 +182,8 @@ export function Canvas({ scale = 1 }: CanvasProps) {
       const pageH = PAGE_H;
 
       const allItems = [
-        ...fields.map((f) => ({ ...f, itemType: "field" as const })),
-        ...tables.map((t) => ({ ...t, itemType: "table" as const })),
+        ...fields.map((f) => ({ ...f, itemType: 'field' as const })),
+        ...tables.map((t) => ({ ...t, itemType: 'table' as const })),
       ].filter((item) => item.id !== st.id);
 
       if (!st.resizing) {
@@ -199,7 +196,7 @@ export function Canvas({ scale = 1 }: CanvasProps) {
           setGuides({ vertical: [], horizontal: [] });
         } else {
           const currentItem =
-            st.type === "field"
+            st.type === 'field'
               ? fields.find((f) => f.id === st.id)
               : tables.find((t) => t.id === st.id);
           if (currentItem) {
@@ -214,7 +211,7 @@ export function Canvas({ scale = 1 }: CanvasProps) {
         nx = clamp(nx, SAFE_MARGIN, pageW - SAFE_MARGIN - st.origW);
         ny = clamp(ny, SAFE_MARGIN, pageH - SAFE_MARGIN - st.origH);
 
-        if (st.type === "field") {
+        if (st.type === 'field') {
           updateField(st.id, { x: nx, y: ny });
         } else {
           updateTable(st.id, { x: nx, y: ny });
@@ -235,88 +232,74 @@ export function Canvas({ scale = 1 }: CanvasProps) {
         nw = clamp(nw, minW, maxW);
         nh = clamp(nh, minH, maxH);
 
-        if (st.type === "field") {
+        if (st.type === 'field') {
           updateField(st.id, { w: nw, h: nh });
         } else {
           updateTable(st.id, { w: nw, h: nh });
         }
       }
     },
-    [
-      fields,
-      tables,
-      scale,
-      findSnapPoints,
-      setGuides,
-      updateField,
-      updateTable,
-    ],
+    [fields, tables, scale, findSnapPoints, setGuides, updateField, updateTable]
   );
 
   const onMouseUpDoc = useCallback(() => {
-    document.removeEventListener("mousemove", onMouseMoveDoc);
+    document.removeEventListener('mousemove', onMouseMoveDoc);
     draggingRef.current = null;
     setGuides({ vertical: [], horizontal: [] });
-    saveToHistory("Элемент перемещен");
+    saveToHistory('Элемент перемещен');
   }, [setGuides, saveToHistory]);
 
   const onTouchEndDoc = useCallback(() => {
-    document.removeEventListener("touchmove", onTouchMoveDoc);
+    document.removeEventListener('touchmove', onTouchMoveDoc);
     draggingRef.current = null;
     setGuides({ vertical: [], horizontal: [] });
-    saveToHistory("Элемент перемещен");
+    saveToHistory('Элемент перемещен');
   }, [setGuides, saveToHistory]);
 
   const handleCanvasClick = useCallback(
     (e: React.MouseEvent) => {
       if (
         e.target === e.currentTarget ||
-        (e.target as HTMLElement).classList.contains("canvas-page")
+        (e.target as HTMLElement).classList.contains('canvas-page')
       ) {
         selectItem(null, null);
       }
     },
-    [selectItem],
+    [selectItem]
   );
 
-  const wrapLines = useCallback(
-    (text: string, fontSize: number, maxWidthPx: number) => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d")!;
-      ctx.font = `${fontSize || 14}px Inter, sans-serif`;
+  const wrapLines = useCallback((text: string, fontSize: number, maxWidthPx: number) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    ctx.font = `${fontSize || 14}px Inter, sans-serif`;
 
-      const words = (text || "").split(/\s+/);
-      const lines: string[] = [];
-      let line = "";
+    const words = (text || '').split(/\s+/);
+    const lines: string[] = [];
+    let line = '';
 
-      for (let i = 0; i < words.length; i++) {
-        const add = (line ? " " : "") + words[i];
-        const test = line + add;
-        if (ctx.measureText(test).width > maxWidthPx && line) {
-          lines.push(line);
-          line = words[i];
-        } else {
-          line = test;
-        }
+    for (let i = 0; i < words.length; i++) {
+      const add = (line ? ' ' : '') + words[i];
+      const test = line + add;
+      if (ctx.measureText(test).width > maxWidthPx && line) {
+        lines.push(line);
+        line = words[i];
+      } else {
+        line = test;
       }
-      if (line) lines.push(line);
+    }
+    if (line) lines.push(line);
 
-      const m = ctx.measureText("ЁУjq");
-      const lineStepPx = Math.ceil(
-        (m.actualBoundingBoxAscent || (fontSize || 14) * 0.8) +
-          (m.actualBoundingBoxDescent || (fontSize || 14) * 0.2),
-      );
+    const m = ctx.measureText('ЁУjq');
+    const lineStepPx = Math.ceil(
+      (m.actualBoundingBoxAscent || (fontSize || 14) * 0.8) +
+        (m.actualBoundingBoxDescent || (fontSize || 14) * 0.2)
+    );
 
-      return { lines, lineStepPx };
-    },
-    [],
-  );
+    return { lines, lineStepPx };
+  }, []);
 
   return (
-    <div
-      className="relative flex-1 overflow-auto bg-muted/30 p-8"
-      onClick={handleCanvasClick}
-    >
+    <div className="relative flex-1 overflow-auto bg-muted/30 p-8" onClick={handleCanvasClick}>
       <div
         ref={pageRef}
         className="canvas-page relative mx-auto bg-white shadow-xl"
@@ -324,7 +307,7 @@ export function Canvas({ scale = 1 }: CanvasProps) {
           width: PAGE_W * scale,
           height: PAGE_H * scale,
           transform: `scale(${scale})`,
-          transformOrigin: "top left",
+          transformOrigin: 'top left',
         }}
         data-testid="canvas-page"
       >
@@ -369,15 +352,14 @@ export function Canvas({ scale = 1 }: CanvasProps) {
 
         {/* Fields */}
         {fields.map((field) => {
-          const isSelected =
-            selectedId === field.id && selectedType === "field";
+          const isSelected = selectedId === field.id && selectedType === 'field';
 
           return (
             <div
               key={field.id}
               className={cn(
-                "absolute cursor-move select-none transition-shadow",
-                isSelected && "ring-2 ring-primary ring-offset-2",
+                'absolute cursor-move select-none transition-shadow',
+                isSelected && 'ring-2 ring-primary ring-offset-2'
               )}
               style={{
                 left: field.x,
@@ -385,29 +367,29 @@ export function Canvas({ scale = 1 }: CanvasProps) {
                 width: field.w,
                 height: field.h,
               }}
-              onMouseDown={(e) => onMouseDownBox(e, field, "field", false)}
-              onTouchStart={(e) => onMouseDownBox(e, field, "field", false)}
+              onMouseDown={(e) => onMouseDownBox(e, field, 'field', false)}
+              onTouchStart={(e) => onMouseDownBox(e, field, 'field', false)}
               data-testid={`field-${field.id}`}
             >
-              {field.type === "text" && (
+              {field.type === 'text' && (
                 <div
-                  className="w-full h-full p-2 overflow-hidden bg-blue-50/50 border border-blue-200/50 rounded"
+                  className="w-full h-full p-2 overflow-hidden bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded-md shadow-sm transition-all duration-200"
                   style={{
                     fontSize: field.fontSize || 14,
-                    fontWeight: field.bold ? "bold" : "normal",
-                    fontStyle: field.italic ? "italic" : "normal",
-                    textAlign: field.align || "left",
+                    fontWeight: field.bold ? 'bold' : 'normal',
+                    fontStyle: field.italic ? 'italic' : 'normal',
+                    textAlign: field.align || 'left',
                   }}
                 >
                   {field.value}
                 </div>
               )}
 
-              {field.type === "image" && field.dataUrl && (
+              {field.type === 'image' && field.dataUrl && (
                 <img
                   src={field.dataUrl}
                   alt={field.label}
-                  className="w-full h-full object-contain bg-gray-50 border border-gray-200 rounded"
+                  className="w-full h-full object-contain bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-md shadow-sm"
                   draggable={false}
                 />
               )}
@@ -419,11 +401,11 @@ export function Canvas({ scale = 1 }: CanvasProps) {
                   style={{ minWidth: 16, minHeight: 16 }}
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    onMouseDownBox(e, field, "field", true);
+                    onMouseDownBox(e, field, 'field', true);
                   }}
                   onTouchStart={(e) => {
                     e.stopPropagation();
-                    onMouseDownBox(e, field, "field", true);
+                    onMouseDownBox(e, field, 'field', true);
                   }}
                   data-testid={`resize-handle-${field.id}`}
                 />
@@ -434,15 +416,14 @@ export function Canvas({ scale = 1 }: CanvasProps) {
 
         {/* Tables */}
         {tables.map((table) => {
-          const isSelected =
-            selectedId === table.id && selectedType === "table";
+          const isSelected = selectedId === table.id && selectedType === 'table';
 
           return (
             <div
               key={table.id}
               className={cn(
-                "absolute cursor-move select-none transition-shadow",
-                isSelected && "ring-2 ring-primary ring-offset-2",
+                'absolute cursor-move select-none transition-shadow',
+                isSelected && 'ring-2 ring-primary ring-offset-2'
               )}
               style={{
                 left: table.x,
@@ -450,11 +431,11 @@ export function Canvas({ scale = 1 }: CanvasProps) {
                 width: table.w,
                 height: table.h,
               }}
-              onMouseDown={(e) => onMouseDownBox(e, table, "table", false)}
-              onTouchStart={(e) => onMouseDownBox(e, table, "table", false)}
+              onMouseDown={(e) => onMouseDownBox(e, table, 'table', false)}
+              onTouchStart={(e) => onMouseDownBox(e, table, 'table', false)}
               data-testid={`table-${table.id}`}
             >
-              <div className="w-full h-full overflow-hidden bg-green-50/50 border border-green-200/50 rounded">
+              <div className="w-full h-full overflow-hidden bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/50 rounded-md shadow-sm">
                 <table className="w-full h-full border-collapse text-xs">
                   <tbody>
                     {table.rows.map((row, ri) => (
@@ -463,10 +444,10 @@ export function Canvas({ scale = 1 }: CanvasProps) {
                           <td
                             key={ci}
                             className={cn(
-                              "border border-green-200 px-1 py-0.5 truncate",
+                              'border border-teal-200 dark:border-teal-700 px-1 py-0.5 truncate',
                               ri === 0 &&
                                 table.headerRow &&
-                                "font-semibold bg-green-100/50",
+                                'font-semibold bg-teal-100 dark:bg-teal-900/50'
                             )}
                           >
                             {cell}
@@ -485,11 +466,11 @@ export function Canvas({ scale = 1 }: CanvasProps) {
                   style={{ minWidth: 16, minHeight: 16 }}
                   onMouseDown={(e) => {
                     e.stopPropagation();
-                    onMouseDownBox(e, table, "table", true);
+                    onMouseDownBox(e, table, 'table', true);
                   }}
                   onTouchStart={(e) => {
                     e.stopPropagation();
-                    onMouseDownBox(e, table, "table", true);
+                    onMouseDownBox(e, table, 'table', true);
                   }}
                   data-testid={`resize-handle-${table.id}`}
                 />

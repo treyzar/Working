@@ -1,0 +1,522 @@
+// DocuParse - Main SCSS Entry Point
+// ===================================
+// A stunning orange-themed document template editor
+// Created for easy integration into your project
+
+// Base Styles - Load first for variable availability
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'animations';
+@use 'components';
+@use 'editor';
+
+// ============================================
+// TAILWIND INTEGRATION
+// ============================================
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// ============================================
+// CSS CUSTOM PROPERTIES FOR TAILWIND
+// ============================================
+:root {
+  // Override Tailwind's default blue with orange
+  --button-outline: rgba(249, 115, 22, 0.15);
+  --badge-outline: rgba(249, 115, 22, 0.1);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(249, 115, 22, 0.05);
+  --elevate-2: rgba(249, 115, 22, 0.1);
+
+  // Background & Surface
+  --background: 30 6% 98%;
+  --foreground: 24 10% 10%;
+  --border: 30 25% 88%;
+
+  // Card
+  --card: 30 20% 99%;
+  --card-foreground: 24 10% 10%;
+  --card-border: 30 30% 92%;
+
+  // Sidebar
+  --sidebar: 30 35% 96%;
+  --sidebar-foreground: 24 15% 12%;
+  --sidebar-border: 30 30% 90%;
+  --sidebar-primary: 25 95% 53%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 30 40% 92%;
+  --sidebar-accent-foreground: 24 15% 12%;
+  --sidebar-ring: 25 95% 53%;
+
+  // Popover
+  --popover: 30 25% 97%;
+  --popover-foreground: 24 10% 10%;
+  --popover-border: 30 30% 88%;
+
+  // Primary - Orange
+  --primary: 25 95% 53%;
+  --primary-foreground: 0 0% 100%;
+
+  // Secondary
+  --secondary: 30 40% 94%;
+  --secondary-foreground: 24 20% 15%;
+
+  // Muted
+  --muted: 30 25% 94%;
+  --muted-foreground: 24 10% 40%;
+
+  // Accent
+  --accent: 25 50% 93%;
+  --accent-foreground: 24 20% 15%;
+
+  // Destructive
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  // Input & Ring
+  --input: 30 30% 85%;
+  --ring: 25 95% 53%;
+
+  // Charts - Orange variations
+  --chart-1: 25 95% 45%;
+  --chart-2: 35 90% 50%;
+  --chart-3: 15 85% 55%;
+  --chart-4: 40 80% 48%;
+  --chart-5: 20 88% 58%;
+
+  // Typography
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  --radius: 0.5rem;
+
+  // Enhanced shadows with orange tint
+  --shadow-2xs: 0px 1px 2px 0px hsla(25, 95%, 53%, 0.02);
+  --shadow-xs: 0px 1px 3px 0px hsla(25, 95%, 53%, 0.03);
+  --shadow-sm: 0px 2px 4px -1px hsla(25, 95%, 53%, 0.05), 0px 1px 2px -1px hsla(25, 95%, 53%, 0.03);
+  --shadow: 0px 4px 6px -1px hsla(25, 95%, 53%, 0.08), 0px 2px 4px -1px hsla(25, 95%, 53%, 0.04);
+  --shadow-md: 0px 6px 10px -2px hsla(25, 95%, 53%, 0.1), 0px 3px 6px -2px hsla(25, 95%, 53%, 0.05);
+  --shadow-lg: 0px 10px 15px -3px hsla(25, 95%, 53%, 0.12),
+    0px 4px 8px -2px hsla(25, 95%, 53%, 0.06);
+  --shadow-xl: 0px 20px 25px -5px hsla(25, 95%, 53%, 0.15),
+    0px 8px 10px -4px hsla(25, 95%, 53%, 0.08);
+  --shadow-2xl: 0px 25px 50px -12px hsla(25, 95%, 53%, 0.25);
+
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  // Border color adjustments
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+
+// Dark Mode
+.dark {
+  --button-outline: rgba(251, 146, 60, 0.15);
+  --badge-outline: rgba(251, 146, 60, 0.1);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(251, 146, 60, 0.08);
+  --elevate-2: rgba(251, 146, 60, 0.15);
+
+  --background: 20 14% 8%;
+  --foreground: 30 10% 96%;
+  --border: 24 10% 18%;
+
+  --card: 22 12% 10%;
+  --card-foreground: 30 10% 96%;
+  --card-border: 24 10% 15%;
+
+  --sidebar: 20 15% 12%;
+  --sidebar-foreground: 30 10% 94%;
+  --sidebar-border: 24 12% 16%;
+  --sidebar-primary: 25 95% 55%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 24 15% 18%;
+  --sidebar-accent-foreground: 30 10% 94%;
+  --sidebar-ring: 25 95% 55%;
+
+  --popover: 22 12% 14%;
+  --popover-foreground: 30 10% 94%;
+  --popover-border: 24 10% 18%;
+
+  --primary: 25 95% 55%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 24 15% 18%;
+  --secondary-foreground: 30 10% 94%;
+
+  --muted: 24 12% 18%;
+  --muted-foreground: 30 10% 60%;
+
+  --accent: 25 30% 22%;
+  --accent-foreground: 30 10% 94%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --input: 24 10% 25%;
+  --ring: 25 95% 55%;
+
+  --chart-1: 25 95% 60%;
+  --chart-2: 35 90% 58%;
+  --chart-3: 15 85% 62%;
+  --chart-4: 40 80% 55%;
+  --chart-5: 20 88% 65%;
+
+  --shadow-2xs: 0px 1px 2px 0px hsla(0, 0%, 0%, 0.1);
+  --shadow-xs: 0px 1px 3px 0px hsla(0, 0%, 0%, 0.15);
+  --shadow-sm: 0px 2px 4px -1px hsla(0, 0%, 0%, 0.2), 0px 1px 2px -1px hsla(0, 0%, 0%, 0.1);
+  --shadow: 0px 4px 6px -1px hsla(0, 0%, 0%, 0.25), 0px 2px 4px -1px hsla(0, 0%, 0%, 0.15);
+  --shadow-md: 0px 6px 10px -2px hsla(0, 0%, 0%, 0.3), 0px 3px 6px -2px hsla(0, 0%, 0%, 0.2);
+  --shadow-lg: 0px 10px 15px -3px hsla(0, 0%, 0%, 0.35), 0px 4px 8px -2px hsla(0, 0%, 0%, 0.25);
+  --shadow-xl: 0px 20px 25px -5px hsla(0, 0%, 0%, 0.4), 0px 8px 10px -4px hsla(0, 0%, 0%, 0.3);
+  --shadow-2xl: 0px 25px 50px -12px hsla(0, 0%, 0%, 0.5);
+}
+
+// ============================================
+// BASE STYLES
+// ============================================
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  // Better text selection with orange
+  ::selection {
+    background: hsla(25, 95%, 53%, 0.2);
+    color: inherit;
+  }
+
+  // Focus visible for accessibility
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  // Scrollbar styling
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, hsl(25, 95%, 65%) 0%, hsl(25, 95%, 53%) 100%);
+    border-radius: 5px;
+    border: 2px solid hsl(var(--muted));
+
+    &:hover {
+      background: linear-gradient(180deg, hsl(25, 95%, 53%) 0%, hsl(25, 95%, 45%) 100%);
+    }
+  }
+}
+
+// ============================================
+// UTILITY CLASSES
+// ============================================
+@layer utilities {
+  // Gradient text utility
+  .text-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(25, 95%, 50%) 0%,
+      hsl(35, 90%, 55%) 50%,
+      hsl(25, 95%, 50%) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientFlow 3s ease infinite;
+  }
+
+  // Glow effects
+  .glow-sm {
+    box-shadow: 0 0 10px hsla(25, 95%, 53%, 0.3);
+  }
+
+  .glow-md {
+    box-shadow: 0 0 20px hsla(25, 95%, 53%, 0.4);
+  }
+
+  .glow-lg {
+    box-shadow: 0 0 30px hsla(25, 95%, 53%, 0.5);
+  }
+
+  // Glass effect
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    .dark & {
+      background: rgba(28, 25, 23, 0.8);
+    }
+  }
+
+  // Orange gradient backgrounds
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, hsl(25, 95%, 55%) 0%, hsl(25, 95%, 48%) 100%);
+  }
+
+  .bg-gradient-warm {
+    background: linear-gradient(135deg, hsl(30, 95%, 58%) 0%, hsl(20, 95%, 50%) 100%);
+  }
+
+  .bg-gradient-sunset {
+    background: linear-gradient(135deg, hsl(35, 95%, 60%) 0%, hsl(15, 90%, 50%) 100%);
+  }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle at center, hsla(25, 95%, 53%, 0.15) 0%, transparent 70%);
+  }
+
+  // Border glow
+  .border-glow {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(
+        135deg,
+        hsl(25, 95%, 55%) 0%,
+        hsl(35, 90%, 58%) 50%,
+        hsl(25, 95%, 55%) 100%
+      );
+      border-radius: inherit;
+      z-index: -1;
+      opacity: 0.6;
+      filter: blur(8px);
+    }
+  }
+
+  // Hide search cancel button
+  input[type='search']::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  // Contenteditable placeholder
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  // Elevate system
+  .no-default-hover-elevate {
+  }
+  .no-default-active-elevate {
+  }
+
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    border-radius: inherit;
+    z-index: 999;
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after {
+    inset: -1px;
+  }
+
+  // Safe area
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .hover-elevate:hover::after,
+  .hover-elevate-2:hover::after {
+    background-color: transparent !important;
+  }
+
+  .hover-elevate:active::after,
+  .hover-elevate-2:active::after {
+    background-color: var(--elevate-2) !important;
+  }
+}
+
+// ============================================
+// CANVAS PAGE STYLES
+// ============================================
+.canvas-page {
+  box-shadow: 0 4px 6px -1px hsla(25, 95%, 53%, 0.1), 0 2px 4px -1px hsla(25, 95%, 53%, 0.06),
+    0 0 40px hsla(25, 95%, 53%, 0.08);
+}
+
+// ============================================
+// PROSE STYLES
+// ============================================
+.prose {
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td,
+  th {
+    border: 1px solid hsl(var(--border));
+    padding: 0.5rem;
+  }
+
+  th {
+    background: hsl(var(--muted));
+    font-weight: 600;
+  }
+}
+
+// ============================================
+// TUTORIAL ANIMATION
+// ============================================
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 hsla(25, 95%, 53%, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 15px hsla(25, 95%, 53%, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 hsla(25, 95%, 53%, 0);
+  }
+}
+
+.tutorial-highlight {
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+// ============================================
+// LOADING SPINNER
+// ============================================
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid hsla(25, 95%, 53%, 0.2);
+  border-top-color: hsl(25, 95%, 53%);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+// ============================================
+// PAGE TRANSITIONS
+// ============================================
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease-out;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease-in;
+}
+
+// ============================================
+// RESPONSIVE BREAKPOINTS
+// ============================================
+@media (max-width: 640px) {
+  :root {
+    --radius: 0.375rem;
+  }
+}
+
+// ============================================
+// PRINT STYLES
+// ============================================
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .canvas-page {
+    box-shadow: none !important;
+  }
+}

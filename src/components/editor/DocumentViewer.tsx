@@ -1,20 +1,12 @@
-import { useState, useCallback, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Upload,
-  FileText,
-  File,
-  X,
-  ZoomIn,
-  ZoomOut,
-  RefreshCw,
-  Eye,
-} from "lucide-react";
-import { useToast } from "@/shared/hooks/docs/use-toast";
-import { Document, Page, pdfjs } from "react-pdf";
-import mammoth from "mammoth";
+import { useState, useCallback, useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Upload, FileText, File, X, ZoomIn, ZoomOut, RefreshCw, Eye } from 'lucide-react';
+import { useToast } from '@/shared/hooks';
+import { Document, Page, pdfjs } from 'react-pdf';
+import mammoth from 'mammoth';
+import { cn } from '@/lib/utils';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -24,9 +16,9 @@ interface DocumentViewerProps {
 
 export function DocumentViewer({ className }: DocumentViewerProps) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [fileType, setFileType] = useState<"pdf" | "docx" | null>(null);
+  const [fileType, setFileType] = useState<'pdf' | 'docx' | null>(null);
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
-  const [docxHtml, setDocxHtml] = useState<string>("");
+  const [docxHtml, setDocxHtml] = useState<string>('');
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [zoom, setZoom] = useState<number>(100);
@@ -40,45 +32,44 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
       if (!file) return;
 
       const fileName = file.name.toLowerCase();
-      const isPdf = fileName.endsWith(".pdf");
-      const isDocx = fileName.endsWith(".docx");
+      const isPdf = fileName.endsWith('.pdf');
+      const isDocx = fileName.endsWith('.docx');
 
       if (!isPdf && !isDocx) {
         toast({
-          title: "Неподдерживаемый формат",
-          description: "Пожалуйста, выберите файл PDF или DOCX",
-          variant: "destructive",
+          title: 'Неподдерживаемый формат',
+          description: 'Пожалуйста, выберите файл PDF или DOCX',
+          variant: 'destructive',
         });
         return;
       }
 
       setIsLoading(true);
       setUploadedFile(file);
-      setFileType(isPdf ? "pdf" : "docx");
+      setFileType(isPdf ? 'pdf' : 'docx');
 
       try {
         if (isPdf) {
           const arrayBuffer = await file.arrayBuffer();
           setPdfData(arrayBuffer);
-          setDocxHtml("");
+          setDocxHtml('');
         } else {
           const arrayBuffer = await file.arrayBuffer();
           const result = await mammoth.convertToHtml({ arrayBuffer });
           setDocxHtml(result.value);
           setPdfData(null);
         }
-      } catch (error: unknown) {
+      } catch (error) {
         toast({
-          title: `Ошибка чтения файла, ${error}`,
-          description:
-            "Не удалось открыть файл. Проверьте, что файл не поврежден.",
-          variant: "destructive",
+          title: 'Ошибка чтения файла',
+          description: 'Не удалось открыть файл. Проверьте, что файл не поврежден.',
+          variant: 'destructive',
         });
       } finally {
         setIsLoading(false);
       }
     },
-    [toast],
+    [toast]
   );
 
   const handleDrop = useCallback(
@@ -95,7 +86,7 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
 
       await handleFileUpload(syntheticEvent);
     },
-    [handleFileUpload],
+    [handleFileUpload]
   );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -107,11 +98,11 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
     setUploadedFile(null);
     setFileType(null);
     setPdfData(null);
-    setDocxHtml("");
+    setDocxHtml('');
     setNumPages(0);
     setCurrentPage(1);
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   }, []);
 
@@ -121,10 +112,10 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
   };
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-3 flex flex-row items-center justify-between">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Eye className="h-4 w-4" />
+    <Card className={cn(className, 'border-orange-100 dark:border-orange-900/50')}>
+      <CardHeader className="pb-3 flex flex-row items-center justify-between bg-gradient-to-r from-orange-50/50 to-amber-50/50 dark:from-orange-950/20 dark:to-amber-950/20">
+        <CardTitle className="text-base flex items-center gap-2 text-orange-800 dark:text-orange-200">
+          <Eye className="h-4 w-4 text-orange-600 dark:text-orange-400" />
           Просмотр документов
         </CardTitle>
         {uploadedFile && (
@@ -162,7 +153,7 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
       <CardContent>
         {!uploadedFile ? (
           <div
-            className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+            className="border-2 border-dashed border-orange-200 dark:border-orange-700 rounded-lg p-8 text-center cursor-pointer hover:border-orange-400 dark:hover:border-orange-500 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-all duration-200"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onClick={() => fileInputRef.current?.click()}
@@ -176,17 +167,21 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
               onChange={handleFileUpload}
               data-testid="input-file-upload"
             />
-            <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-medium mb-2">Загрузите документ</h3>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/40 dark:to-amber-900/40 flex items-center justify-center">
+              <Upload className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+            </div>
+            <h3 className="text-lg font-medium mb-2 text-orange-800 dark:text-orange-200">
+              Загрузите документ
+            </h3>
             <p className="text-sm text-muted-foreground mb-4">
               Перетащите файл сюда или нажмите для выбора
             </p>
-            <div className="flex justify-center gap-2">
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <div className="flex justify-center gap-4">
+              <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-2 py-1 rounded">
                 <File className="h-4 w-4" />
                 PDF
               </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-2 py-1 rounded">
                 <FileText className="h-4 w-4" />
                 DOCX
               </div>
@@ -194,33 +189,28 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
-              {fileType === "pdf" ? (
-                <File className="h-5 w-5 text-red-500" />
+            <div className="flex items-center gap-2 p-2 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 rounded-md border border-orange-200 dark:border-orange-800">
+              {fileType === 'pdf' ? (
+                <File className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               ) : (
-                <FileText className="h-5 w-5 text-blue-500" />
+                <FileText className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               )}
-              <span className="text-sm font-medium truncate flex-1">
-                {uploadedFile.name}
-              </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-sm font-medium truncate flex-1">{uploadedFile.name}</span>
+              <span className="text-xs text-orange-600/70 dark:text-orange-400/70">
                 {(uploadedFile.size / 1024).toFixed(1)} KB
               </span>
             </div>
 
             {isLoading ? (
               <div className="flex items-center justify-center h-[400px]">
-                <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                <RefreshCw className="h-8 w-8 animate-spin text-orange-500" />
               </div>
             ) : (
-              <ScrollArea className="h-[400px] border rounded-md">
-                {fileType === "pdf" && pdfData && (
+              <ScrollArea className="h-[400px] border border-orange-200 dark:border-orange-800 rounded-md">
+                {fileType === 'pdf' && pdfData && (
                   <div
                     className="flex flex-col items-center p-4"
-                    style={{
-                      transform: `scale(${zoom / 100})`,
-                      transformOrigin: "top center",
-                    }}
+                    style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}
                   >
                     <Document
                       file={pdfData}
@@ -265,13 +255,10 @@ export function DocumentViewer({ className }: DocumentViewerProps) {
                   </div>
                 )}
 
-                {fileType === "docx" && docxHtml && (
+                {fileType === 'docx' && docxHtml && (
                   <div
                     className="p-4 prose prose-sm max-w-none"
-                    style={{
-                      transform: `scale(${zoom / 100})`,
-                      transformOrigin: "top left",
-                    }}
+                    style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top left' }}
                     dangerouslySetInnerHTML={{ __html: docxHtml }}
                     data-testid="docx-content"
                   />

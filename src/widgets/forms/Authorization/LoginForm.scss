@@ -19,7 +19,6 @@
   .error-message {
     color: red;
     font-size: 0.875rem;
-    margin-bottom: 1rem;
   }
 
   label {
@@ -37,7 +36,7 @@
     border: 1px solid transparent;
     background: #ededed;
     font-size: 1rem;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     transition: border 0.3s ease;
 
     &:focus {
@@ -48,10 +47,17 @@
     }
   }
 
+  /* Контейнер под текст ошибки — всегда занимает место */
+  .error-row {
+    min-height: 18px; /* ~ 0.875rem */
+    margin-top: -8px; /* слегка подтягиваем к инпуту, чтобы не было лишней дыры */
+    margin-bottom: 8px;
+  }
+
   .error-text {
+    display: block;
     color: red;
     font-size: 0.875rem;
-    margin-top: 0.25rem;
   }
 
   .action-buttons {

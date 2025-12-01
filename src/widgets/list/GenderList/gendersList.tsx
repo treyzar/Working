@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import type { IGenderListProps } from "@shared/interfaces/interfaces";
+import type { IGenderListProps } from "@shared/types";
 import "./GenderList.scss";
 
 const GenderList = forwardRef<HTMLSelectElement, IGenderListProps>(
@@ -16,7 +16,7 @@ const GenderList = forwardRef<HTMLSelectElement, IGenderListProps>(
         <option value="f">Женщина</option>
       </select>
     );
-  }
+  },
 );
 
 GenderList.displayName = "GenderList";

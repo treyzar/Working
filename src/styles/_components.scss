@@ -1,0 +1,536 @@
+// DocuParse - Component Styles
+// ============================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ============================================
+// BUTTONS
+// ============================================
+.dp-button {
+  @include button-base;
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.875rem;
+
+  &--primary {
+    @include button-primary;
+  }
+
+  &--secondary {
+    @include button-secondary;
+  }
+
+  &--ghost {
+    @include button-ghost;
+  }
+
+  &--icon {
+    padding: var(--space-2);
+    aspect-ratio: 1;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  &--lg {
+    padding: var(--space-3) var(--space-6);
+    font-size: 1rem;
+  }
+
+  &--sm {
+    padding: var(--space-1) var(--space-3);
+    font-size: 0.75rem;
+  }
+}
+
+// ============================================
+// INPUTS
+// ============================================
+.dp-input {
+  @include input-base;
+
+  &--lg {
+    padding: var(--space-3) var(--space-4);
+    font-size: 1rem;
+  }
+
+  &--sm {
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
+  }
+}
+
+.dp-textarea {
+  @include input-base;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.dp-select {
+  @include input-base;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  padding-right: var(--space-10);
+}
+
+// ============================================
+// CARDS
+// ============================================
+.dp-card {
+  @include card-elevated;
+  padding: var(--space-4);
+
+  &--interactive {
+    @include card-interactive;
+  }
+
+  &--highlight {
+    border-left: 4px solid var(--color-primary-500);
+
+    &:hover {
+      border-left-color: var(--color-primary-600);
+    }
+  }
+
+  &__header {
+    @include flex-between;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  &__content {
+    color: var(--color-text-secondary);
+  }
+
+  &__footer {
+    @include flex-between;
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+// ============================================
+// BADGES
+// ============================================
+.dp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+
+  &--primary {
+    background: var(--color-primary-100);
+    color: var(--color-primary-700);
+    border: 1px solid var(--color-primary-200);
+  }
+
+  &--success {
+    background: $success-light;
+    color: $success-dark;
+    border: 1px solid $success;
+  }
+
+  &--warning {
+    background: $warning-light;
+    color: $warning-dark;
+    border: 1px solid $warning;
+  }
+
+  &--error {
+    background: $error-light;
+    color: $error-dark;
+    border: 1px solid $error;
+  }
+
+  &--glow {
+    box-shadow: 0 0 10px var(--color-primary-300);
+  }
+}
+
+// ============================================
+// TOOLTIPS
+// ============================================
+.dp-tooltip {
+  position: relative;
+
+  &__content {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-primary-900);
+    color: white;
+    font-size: 0.75rem;
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+    z-index: var(--z-tooltip);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--color-primary-900);
+    }
+  }
+
+  &:hover .dp-tooltip__content {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// ============================================
+// TABS
+// ============================================
+.dp-tabs {
+  &__list {
+    display: flex;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    background: var(--color-primary-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-primary-100);
+  }
+
+  &__trigger {
+    @include flex-center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      color: var(--color-primary-600);
+      background: var(--color-primary-100);
+    }
+
+    &--active {
+      color: white;
+      background: var(--gradient-primary);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  &__content {
+    padding: var(--space-4);
+    animation: fadeSlideIn 0.2s ease-out;
+  }
+}
+
+// ============================================
+// PROGRESS
+// ============================================
+.dp-progress {
+  width: 100%;
+  height: 8px;
+  background: var(--color-primary-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+
+  &__bar {
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease-out;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-shine);
+      animation: shimmer 2s infinite;
+    }
+  }
+
+  &--animated .dp-progress__bar {
+    animation: progressBar 2s ease-out forwards;
+  }
+}
+
+// ============================================
+// DIVIDERS
+// ============================================
+.dp-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-primary-200) 50%,
+    transparent 100%
+  );
+  margin: var(--space-4) 0;
+
+  &--vertical {
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--color-primary-200) 50%,
+      transparent 100%
+    );
+    margin: 0 var(--space-4);
+  }
+}
+
+// ============================================
+// MODAL / DIALOG
+// ============================================
+.dp-modal {
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: var(--z-modal);
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  &__content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary-200);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl), var(--shadow-glow);
+    z-index: calc(var(--z-modal) + 1);
+    overflow: hidden;
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  &__header {
+    @include flex-between;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-primary-50);
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    @include gradient-text;
+  }
+
+  &__body {
+    padding: var(--space-6);
+    overflow-y: auto;
+    @include custom-scrollbar;
+  }
+
+  &__footer {
+    @include flex-between;
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--color-border);
+    background: var(--color-primary-50);
+  }
+}
+
+// ============================================
+// TOAST NOTIFICATIONS
+// ============================================
+.dp-toast {
+  @include flex-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  animation: slideUp 0.3s ease-out;
+
+  &--success {
+    border-left: 4px solid $success;
+  }
+
+  &--warning {
+    border-left: 4px solid $warning;
+  }
+
+  &--error {
+    border-left: 4px solid $error;
+  }
+
+  &__icon {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-100);
+    color: var(--color-primary-600);
+  }
+
+  &__content {
+    flex: 1;
+  }
+
+  &__title {
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  &__message {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--space-1);
+  }
+}
+
+// ============================================
+// SKELETON LOADER
+// ============================================
+.dp-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-100) 25%,
+    var(--color-primary-200) 50%,
+    var(--color-primary-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+
+  &--text {
+    height: 1em;
+    width: 100%;
+  }
+
+  &--avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+  }
+
+  &--button {
+    height: 36px;
+    width: 100px;
+    border-radius: var(--radius-md);
+  }
+}
+
+// ============================================
+// EMPTY STATE
+// ============================================
+.dp-empty-state {
+  @include flex-column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  text-align: center;
+
+  &__icon {
+    @include flex-center;
+    width: 80px;
+    height: 80px;
+    margin-bottom: var(--space-6);
+    background: var(--color-primary-100);
+    border-radius: var(--radius-full);
+    color: var(--color-primary-500);
+    animation: float 3s ease-in-out infinite;
+
+    svg {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  &__description {
+    color: var(--color-text-secondary);
+    max-width: 400px;
+    margin-bottom: var(--space-6);
+  }
+}
+
+// ============================================
+// DROPZONE
+// ============================================
+.dp-dropzone {
+  @include flex-column;
+  @include flex-center;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  border: 2px dashed var(--color-primary-300);
+  border-radius: var(--radius-xl);
+  background: var(--color-primary-50);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+
+  &:hover,
+  &--active {
+    border-color: var(--color-primary-500);
+    background: var(--color-primary-100);
+    box-shadow: var(--shadow-glow);
+  }
+
+  &__icon {
+    @include flex-center;
+    width: 60px;
+    height: 60px;
+    background: var(--color-primary-200);
+    border-radius: var(--radius-full);
+    color: var(--color-primary-600);
+    transition: all var(--transition-normal);
+  }
+
+  &:hover &__icon,
+  &--active &__icon {
+    background: var(--color-primary-500);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  &__text {
+    text-align: center;
+
+    strong {
+      color: var(--color-primary-600);
+    }
+  }
+}

@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { useEditorStore } from "@/entities/docs/store/store";
+import { useState } from 'react';
+import { useEditorStore } from '@/entities/docs';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import {
   Type,
   Image,
@@ -19,55 +19,55 @@ import {
   CheckCircle,
   ArrowRight,
   ArrowLeft,
-} from "lucide-react";
+} from 'lucide-react';
 
 const tutorialSteps = [
   {
-    title: "Добро пожаловать в редактор документов",
+    title: 'Добро пожаловать в редактор документов',
     description:
-      "Этот редактор поможет вам создавать профессиональные документы в форматах PDF и DOCX. Давайте познакомимся с основными функциями.",
+      'Этот редактор поможет вам создавать профессиональные документы в форматах PDF и DOCX. Давайте познакомимся с основными функциями.',
     icon: FileText,
     highlight: null,
   },
   {
-    title: "Добавление текста",
+    title: 'Добавление текста',
     description:
       "Нажмите кнопку с буквой 'T' на панели инструментов, чтобы добавить текстовый блок. Вы можете изменить шрифт, размер и выравнивание текста.",
     icon: Type,
-    highlight: "button-add-text",
+    highlight: 'button-add-text',
   },
   {
-    title: "Добавление изображений",
+    title: 'Добавление изображений',
     description:
-      "Нажмите кнопку с изображением горы, чтобы загрузить картинку с вашего компьютера. Изображения автоматически масштабируются под размер страницы.",
+      'Нажмите кнопку с изображением горы, чтобы загрузить картинку с вашего компьютера. Изображения автоматически масштабируются под размер страницы.',
     icon: Image,
-    highlight: "button-add-image",
+    highlight: 'button-add-image',
   },
   {
-    title: "Добавление таблиц",
+    title: 'Добавление таблиц',
     description:
-      "Нажмите кнопку с таблицей, чтобы добавить таблицу. Вы можете добавлять и удалять строки и колонки, редактировать ячейки.",
+      'Нажмите кнопку с таблицей, чтобы добавить таблицу. Вы можете добавлять и удалять строки и колонки, редактировать ячейки.',
     icon: Table2,
-    highlight: "button-add-table",
+    highlight: 'button-add-table',
   },
   {
-    title: "Перемещение элементов",
+    title: 'Перемещение элементов',
     description:
-      "Зажмите левую кнопку мыши на элементе и перетащите его в нужное место. Элементы автоматически выравниваются друг относительно друга.",
+      'Зажмите левую кнопку мыши на элементе и перетащите его в нужное место. Элементы автоматически выравниваются друг относительно друга.',
     icon: Move,
     highlight: null,
   },
   {
-    title: "Редактирование свойств",
+    title: 'Редактирование свойств',
     description:
-      "Выберите элемент, чтобы открыть панель свойств справа. Здесь вы можете изменить текст, размер, стиль и другие параметры.",
+      'Выберите элемент, чтобы открыть панель свойств справа. Здесь вы можете изменить текст, размер, стиль и другие параметры.',
     icon: Edit3,
     highlight: null,
   },
   {
-    title: "Готово!",
+    title: 'Готово!',
     description:
-      "Теперь вы знаете основы работы с редактором. Не забудьте сохранить свой документ и скачать его в нужном формате!",
+      'Теперь вы знаете основы работы с редактором. Не забудьте сохранить свой документ и скачать его в нужном формате!',
     icon: CheckCircle,
     highlight: null,
   },
@@ -103,20 +103,22 @@ export function Tutorial() {
   return (
     <Dialog open={showTutorial} onOpenChange={handleClose}>
       <DialogContent
-        className="sm:max-w-md"
+        className="sm:max-w-md border-orange-200 dark:border-orange-800"
         data-testid="tutorial-dialog"
         aria-describedby="tutorial-description"
       >
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
-              <StepIcon className="h-6 w-6 text-primary" />
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/50 dark:to-amber-900/50 shadow-md">
+              <StepIcon className="h-6 w-6 text-orange-600 dark:text-orange-400" />
             </div>
             <div>
-              <DialogTitle>{step.title}</DialogTitle>
+              <DialogTitle className="text-orange-800 dark:text-orange-200">
+                {step.title}
+              </DialogTitle>
               <p
                 id="tutorial-description"
-                className="text-sm text-muted-foreground"
+                className="text-sm text-orange-600/70 dark:text-orange-400/70"
               >
                 Шаг {currentStep + 1} из {tutorialSteps.length}
               </p>
@@ -125,8 +127,13 @@ export function Tutorial() {
         </DialogHeader>
 
         <div className="py-4">
-          <Progress value={progress} className="h-1 mb-4" />
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <div className="h-1.5 mb-4 bg-orange-100 dark:bg-orange-900/50 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-300 ease-out rounded-full"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed bg-orange-50/50 dark:bg-orange-950/20 p-3 rounded-lg border border-orange-100 dark:border-orange-900">
             {step.description}
           </p>
         </div>

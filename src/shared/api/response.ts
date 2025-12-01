@@ -8,10 +8,7 @@ import axios, {
   type RawAxiosRequestHeaders,
 } from "axios";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-  hardLogout,
-  isAuthPath,
-} from "../lib/utils/services/helpers/authHelpers";
+import { hardLogout, isAuthPath } from "../lib/utils/services";
 import type { IUserProfile } from "../types/interfaces/interfaces";
 
 const API_URL = import.meta.env.VITE_API_URL as string;
@@ -61,7 +58,7 @@ const getHeader = (headers: AnyHeaders, name: string): string | undefined => {
     return typeof v === "string" ? v : undefined;
   }
   const key = Object.keys(headers).find(
-    (k) => k.toLowerCase() === name.toLowerCase()
+    (k) => k.toLowerCase() === name.toLowerCase(),
   );
   const val = key ? (headers as RawAxiosRequestHeaders)[key] : undefined;
   return typeof val === "string" ? val : undefined;
@@ -69,7 +66,7 @@ const getHeader = (headers: AnyHeaders, name: string): string | undefined => {
 const setHeader = (
   headers: AnyHeaders,
   name: string,
-  value: string
+  value: string,
 ): AnyHeaders => {
   if (!headers) return { [name]: value } as RawAxiosRequestHeaders;
   if (headers instanceof AxiosHeaders) {
@@ -140,7 +137,7 @@ export function installAuthInterceptor(queryClient: QueryClient): void {
       try {
         const res = await axios.post<RefreshResponse>(
           `${API_URL}/users/api/get_tokens/`,
-          { refresh: refreshToken }
+          { refresh: refreshToken },
         );
         const newAccess = res.data?.access;
         if (!newAccess) throw new Error("No access token in refresh response");
@@ -153,7 +150,7 @@ export function installAuthInterceptor(queryClient: QueryClient): void {
         apiClient.defaults.headers.common = setHeader(
           common,
           "Authorization",
-          `Bearer ${newAccess}`
+          `Bearer ${newAccess}`,
         ) as any;
 
         processQueue(null, newAccess);
@@ -175,7 +172,7 @@ export function installAuthInterceptor(queryClient: QueryClient): void {
       } finally {
         isRefreshing = false;
       }
-    }
+    },
   );
 }
 
@@ -196,7 +193,7 @@ export async function bootstrapProfile(queryClient: QueryClient) {
 
   try {
     const { data } = await apiClient.get<RawProfile>(
-      "/users/api/profile/default/"
+      "/users/api/profile/default/",
     );
     const profile = normalizeProfile(data);
     queryClient.setQueryData<IUserProfile>(["profile"], profile);

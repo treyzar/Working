@@ -5,7 +5,7 @@ import apiClient, {
   getAccessToken,
   normalizeProfile,
 } from "@shared/api/response";
-import { isAuthPath } from "@shared/lib/utils/services/helpers/authHelpers";
+import { isAuthPath } from "@shared/lib/utils/services";
 import type { IUserProfile } from "@shared/types/interfaces/interfaces";
 
 type RawProfile = IUserProfile | { user: IUserProfile };
@@ -13,7 +13,7 @@ type RawProfile = IUserProfile | { user: IUserProfile };
 export async function profileFn(signal?: AbortSignal): Promise<IUserProfile> {
   const { data } = await apiClient.get<RawProfile>(
     "/users/api/profile/default/",
-    { signal }
+    { signal },
   );
   return normalizeProfile(data);
 }

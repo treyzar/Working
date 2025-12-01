@@ -1,0 +1,181 @@
+// DocuParse Orange Theme - Design System Variables
+// =================================================
+
+// Orange Color Palette - Main Theme
+$orange-50: #fff7ed;
+$orange-100: #ffedd5;
+$orange-200: #fed7aa;
+$orange-300: #fdba74;
+$orange-400: #fb923c;
+$orange-500: #f97316;
+$orange-600: #ea580c;
+$orange-700: #c2410c;
+$orange-800: #9a3412;
+$orange-900: #7c2d12;
+$orange-950: #431407;
+
+// Amber Accents (warm complement)
+$amber-50: #fffbeb;
+$amber-100: #fef3c7;
+$amber-200: #fde68a;
+$amber-300: #fcd34d;
+$amber-400: #fbbf24;
+$amber-500: #f59e0b;
+$amber-600: #d97706;
+
+// Neutral Colors
+$neutral-50: #fafaf9;
+$neutral-100: #f5f5f4;
+$neutral-200: #e7e5e4;
+$neutral-300: #d6d3d1;
+$neutral-400: #a8a29e;
+$neutral-500: #78716c;
+$neutral-600: #57534e;
+$neutral-700: #44403c;
+$neutral-800: #292524;
+$neutral-900: #1c1917;
+$neutral-950: #0c0a09;
+
+// Functional Colors
+$success-light: #dcfce7;
+$success: #22c55e;
+$success-dark: #15803d;
+
+$warning-light: #fef3c7;
+$warning: #f59e0b;
+$warning-dark: #b45309;
+
+$error-light: #fee2e2;
+$error: #ef4444;
+$error-dark: #b91c1c;
+
+$info-light: #dbeafe;
+$info: #3b82f6;
+$info-dark: #1d4ed8;
+
+// Theme Colors (CSS Variables for light/dark mode support)
+:root {
+  // Primary Orange
+  --color-primary-50: #{$orange-50};
+  --color-primary-100: #{$orange-100};
+  --color-primary-200: #{$orange-200};
+  --color-primary-300: #{$orange-300};
+  --color-primary-400: #{$orange-400};
+  --color-primary-500: #{$orange-500};
+  --color-primary-600: #{$orange-600};
+  --color-primary-700: #{$orange-700};
+  --color-primary-800: #{$orange-800};
+  --color-primary-900: #{$orange-900};
+
+  // Semantic Colors
+  --color-background: #{$neutral-50};
+  --color-surface: #ffffff;
+  --color-surface-elevated: #{$orange-50};
+  --color-text-primary: #{$neutral-900};
+  --color-text-secondary: #{$neutral-600};
+  --color-text-muted: #{$neutral-400};
+  --color-border: #{$neutral-200};
+  --color-border-hover: #{$orange-300};
+
+  // Component Colors
+  --color-card-bg: #ffffff;
+  --color-card-border: #{$orange-100};
+  --color-sidebar-bg: #{$orange-50};
+  --color-sidebar-border: #{$orange-200};
+  --color-input-bg: #ffffff;
+  --color-input-border: #{$orange-200};
+  --color-input-focus: #{$orange-400};
+
+  // Button Colors
+  --color-btn-primary: #{$orange-500};
+  --color-btn-primary-hover: #{$orange-600};
+  --color-btn-primary-active: #{$orange-700};
+  --color-btn-secondary: #{$orange-100};
+  --color-btn-secondary-hover: #{$orange-200};
+
+  // Shadows with orange tint
+  --shadow-sm: 0 1px 2px rgba(249, 115, 22, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(249, 115, 22, 0.1), 0 2px 4px -1px rgba(249, 115, 22, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(249, 115, 22, 0.1), 0 4px 6px -2px rgba(249, 115, 22, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(249, 115, 22, 0.1), 0 10px 10px -5px rgba(249, 115, 22, 0.04);
+  --shadow-glow: 0 0 20px rgba(249, 115, 22, 0.3);
+  --shadow-glow-lg: 0 0 40px rgba(249, 115, 22, 0.4);
+
+  // Gradients
+  --gradient-primary: linear-gradient(135deg, #{$orange-400} 0%, #{$orange-600} 100%);
+  --gradient-subtle: linear-gradient(180deg, #{$orange-50} 0%, #ffffff 100%);
+  --gradient-radial: radial-gradient(circle at center, #{$orange-100} 0%, transparent 70%);
+  --gradient-shine: linear-gradient(
+    135deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 80%
+  );
+
+  // Border Radius
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  // Spacing Scale
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  // Typography
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  // Transitions
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  // Z-index Scale
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 300;
+  --z-popover: 400;
+  --z-tooltip: 500;
+  --z-toast: 600;
+}
+
+// Dark Mode Overrides
+.dark {
+  --color-background: #{$neutral-900};
+  --color-surface: #{$neutral-800};
+  --color-surface-elevated: #{$neutral-700};
+  --color-text-primary: #{$neutral-50};
+  --color-text-secondary: #{$neutral-300};
+  --color-text-muted: #{$neutral-500};
+  --color-border: #{$neutral-700};
+  --color-border-hover: #{$orange-500};
+
+  --color-card-bg: #{$neutral-800};
+  --color-card-border: #{$orange-900};
+  --color-sidebar-bg: #{$neutral-900};
+  --color-sidebar-border: #{$orange-800};
+  --color-input-bg: #{$neutral-800};
+  --color-input-border: #{$neutral-600};
+  --color-input-focus: #{$orange-500};
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(249, 115, 22, 0.4);
+  --shadow-glow-lg: 0 0 60px rgba(249, 115, 22, 0.5);
+
+  --gradient-subtle: linear-gradient(180deg, #{$neutral-800} 0%, #{$neutral-900} 100%);
+}

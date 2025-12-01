@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { Field, TableItem, HistoryState } from "@shared/schema";
-import { PAGE_W, PAGE_H, SAFE_MARGIN } from "@shared/schema";
+import type { Field, TableItem, HistoryState } from "@shared/types";
+import { PAGE_W, PAGE_H, SAFE_MARGIN } from "@shared/types";
 
 const MAX_HISTORY = 50;
 

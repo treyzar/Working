@@ -1,18 +1,18 @@
-import { useEditorStore } from "@/entities/docs/store/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
+import { useEditorStore } from '@entities/docs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlignLeft,
   AlignCenter,
@@ -25,9 +25,9 @@ import {
   Table2,
   Type,
   Image,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { Align } from "@shared/schema";
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { Align } from '@shared/types';
 
 export function Inspector() {
   const {
@@ -48,19 +48,17 @@ export function Inspector() {
     saveToHistory,
   } = useEditorStore();
 
-  const selectedField =
-    selectedType === "field" ? fields.find((f) => f.id === selectedId) : null;
-  const selectedTable =
-    selectedType === "table" ? tables.find((t) => t.id === selectedId) : null;
+  const selectedField = selectedType === 'field' ? fields.find((f) => f.id === selectedId) : null;
+  const selectedTable = selectedType === 'table' ? tables.find((t) => t.id === selectedId) : null;
 
   if (!selectedId) {
     return (
-      <Card className="h-full">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Свойства</CardTitle>
+      <Card className="h-full border-orange-100 dark:border-orange-900/50">
+        <CardHeader className="pb-3 bg-gradient-to-r from-orange-50/50 to-amber-50/50 dark:from-orange-950/20 dark:to-amber-950/20">
+          <CardTitle className="text-base text-orange-800 dark:text-orange-200">Свойства</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-sm text-muted-foreground text-center py-8">
+          <div className="text-sm text-muted-foreground text-center py-8 px-4 bg-orange-50/30 dark:bg-orange-950/20 rounded-lg border border-dashed border-orange-200 dark:border-orange-800">
             Выберите элемент на холсте для редактирования его свойств
           </div>
         </CardContent>
@@ -70,25 +68,29 @@ export function Inspector() {
 
   if (selectedField) {
     return (
-      <Card className="h-full overflow-auto">
-        <CardHeader className="pb-3 flex flex-row items-center gap-2">
-          {selectedField.type === "text" && <Type className="h-4 w-4" />}
-          {selectedField.type === "image" && <Image className="h-4 w-4" />}
-          <CardTitle className="text-base">
-            {selectedField.type === "text" ? "Текст" : "Изображение"}
+      <Card className="h-full overflow-auto border-orange-100 dark:border-orange-900/50">
+        <CardHeader className="pb-3 flex flex-row items-center gap-2 bg-gradient-to-r from-orange-50/50 to-amber-50/50 dark:from-orange-950/20 dark:to-amber-950/20">
+          {selectedField.type === 'text' && (
+            <Type className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+          )}
+          {selectedField.type === 'image' && (
+            <Image className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          )}
+          <CardTitle className="text-base text-orange-800 dark:text-orange-200">
+            {selectedField.type === 'text' ? 'Текст' : 'Изображение'}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {selectedField.type === "text" && (
+          {selectedField.type === 'text' && (
             <>
               <div className="space-y-2">
                 <Label>Текст</Label>
                 <Textarea
-                  value={selectedField.value || ""}
+                  value={selectedField.value || ''}
                   onChange={(e) => {
                     updateField(selectedId, { value: e.target.value });
                   }}
-                  onBlur={() => saveToHistory("Текст изменен")}
+                  onBlur={() => saveToHistory('Текст изменен')}
                   className="min-h-[100px] resize-none"
                   data-testid="input-field-text"
                 />
@@ -101,10 +103,8 @@ export function Inspector() {
                   min={8}
                   max={72}
                   step={1}
-                  onValueChange={([v]) =>
-                    updateField(selectedId, { fontSize: v })
-                  }
-                  onValueCommit={() => saveToHistory("Размер шрифта изменен")}
+                  onValueChange={([v]) => updateField(selectedId, { fontSize: v })}
+                  onValueCommit={() => saveToHistory('Размер шрифта изменен')}
                   data-testid="slider-font-size"
                 />
               </div>
@@ -114,10 +114,10 @@ export function Inspector() {
                 <div className="flex gap-2">
                   <Button
                     size="icon"
-                    variant={selectedField.bold ? "default" : "outline"}
+                    variant={selectedField.bold ? 'default' : 'outline'}
                     onClick={() => {
                       updateField(selectedId, { bold: !selectedField.bold });
-                      saveToHistory("Стиль изменен");
+                      saveToHistory('Стиль изменен');
                     }}
                     data-testid="button-bold"
                   >
@@ -125,12 +125,10 @@ export function Inspector() {
                   </Button>
                   <Button
                     size="icon"
-                    variant={selectedField.italic ? "default" : "outline"}
+                    variant={selectedField.italic ? 'default' : 'outline'}
                     onClick={() => {
-                      updateField(selectedId, {
-                        italic: !selectedField.italic,
-                      });
-                      saveToHistory("Стиль изменен");
+                      updateField(selectedId, { italic: !selectedField.italic });
+                      saveToHistory('Стиль изменен');
                     }}
                     data-testid="button-italic"
                   >
@@ -142,24 +140,20 @@ export function Inspector() {
               <div className="space-y-2">
                 <Label>Выравнивание</Label>
                 <div className="flex gap-2">
-                  {(["left", "center", "right"] as Align[]).map((align) => (
+                  {(['left', 'center', 'right'] as Align[]).map((align) => (
                     <Button
                       key={align}
                       size="icon"
-                      variant={
-                        selectedField.align === align ? "default" : "outline"
-                      }
+                      variant={selectedField.align === align ? 'default' : 'outline'}
                       onClick={() => {
                         updateField(selectedId, { align });
-                        saveToHistory("Выравнивание изменено");
+                        saveToHistory('Выравнивание изменено');
                       }}
                       data-testid={`button-align-${align}`}
                     >
-                      {align === "left" && <AlignLeft className="h-4 w-4" />}
-                      {align === "center" && (
-                        <AlignCenter className="h-4 w-4" />
-                      )}
-                      {align === "right" && <AlignRight className="h-4 w-4" />}
+                      {align === 'left' && <AlignLeft className="h-4 w-4" />}
+                      {align === 'center' && <AlignCenter className="h-4 w-4" />}
+                      {align === 'right' && <AlignRight className="h-4 w-4" />}
                     </Button>
                   ))}
                 </div>
@@ -176,12 +170,8 @@ export function Inspector() {
                   <Input
                     type="number"
                     value={Math.round(selectedField.x)}
-                    onChange={(e) =>
-                      updateField(selectedId, {
-                        x: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Позиция изменена")}
+                    onChange={(e) => updateField(selectedId, { x: parseInt(e.target.value) || 0 })}
+                    onBlur={() => saveToHistory('Позиция изменена')}
                     data-testid="input-pos-x"
                   />
                 </div>
@@ -190,46 +180,30 @@ export function Inspector() {
                   <Input
                     type="number"
                     value={Math.round(selectedField.y)}
-                    onChange={(e) =>
-                      updateField(selectedId, {
-                        y: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Позиция изменена")}
+                    onChange={(e) => updateField(selectedId, { y: parseInt(e.target.value) || 0 })}
+                    onBlur={() => saveToHistory('Позиция изменена')}
                     data-testid="input-pos-y"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Ширина
-                  </Label>
+                  <Label className="text-xs text-muted-foreground">Ширина</Label>
                   <Input
                     type="number"
                     value={Math.round(selectedField.w)}
-                    onChange={(e) =>
-                      updateField(selectedId, {
-                        w: parseInt(e.target.value) || 80,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Размер изменен")}
+                    onChange={(e) => updateField(selectedId, { w: parseInt(e.target.value) || 80 })}
+                    onBlur={() => saveToHistory('Размер изменен')}
                     data-testid="input-width"
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Высота
-                  </Label>
+                  <Label className="text-xs text-muted-foreground">Высота</Label>
                   <Input
                     type="number"
                     value={Math.round(selectedField.h)}
-                    onChange={(e) =>
-                      updateField(selectedId, {
-                        h: parseInt(e.target.value) || 30,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Размер изменен")}
+                    onChange={(e) => updateField(selectedId, { h: parseInt(e.target.value) || 30 })}
+                    onBlur={() => saveToHistory('Размер изменен')}
                     data-testid="input-height"
                   />
                 </div>
@@ -256,10 +230,10 @@ export function Inspector() {
 
   if (selectedTable) {
     return (
-      <Card className="h-full overflow-auto">
-        <CardHeader className="pb-3 flex flex-row items-center gap-2">
-          <Table2 className="h-4 w-4" />
-          <CardTitle className="text-base">Таблица</CardTitle>
+      <Card className="h-full overflow-auto border-teal-100 dark:border-teal-900/50">
+        <CardHeader className="pb-3 flex flex-row items-center gap-2 bg-gradient-to-r from-teal-50/50 to-cyan-50/50 dark:from-teal-950/20 dark:to-cyan-950/20">
+          <Table2 className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+          <CardTitle className="text-base text-teal-800 dark:text-teal-200">Таблица</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -292,7 +266,7 @@ export function Inspector() {
               checked={selectedTable.headerRow ?? true}
               onCheckedChange={(checked) => {
                 updateTable(selectedId, { headerRow: checked });
-                saveToHistory("Настройки таблицы изменены");
+                saveToHistory('Настройки таблицы изменены');
               }}
               data-testid="switch-header-row"
             />
@@ -302,12 +276,10 @@ export function Inspector() {
             <div className="space-y-2">
               <Label>Стиль границ</Label>
               <Select
-                value={selectedTable.borderStyle || "light"}
+                value={selectedTable.borderStyle || 'light'}
                 onValueChange={(v) => {
-                  updateTable(selectedId, {
-                    borderStyle: v as "none" | "light" | "full",
-                  });
-                  saveToHistory("Стиль границ изменен");
+                  updateTable(selectedId, { borderStyle: v as 'none' | 'light' | 'full' });
+                  saveToHistory('Стиль границ изменен');
                 }}
               >
                 <SelectTrigger data-testid="select-border-style">
@@ -333,20 +305,11 @@ export function Inspector() {
                         <td key={ci} className="p-1">
                           <Input
                             value={cell}
-                            onChange={(e) =>
-                              updateTableCell(
-                                selectedId,
-                                ri,
-                                ci,
-                                e.target.value,
-                              )
-                            }
-                            onBlur={() => saveToHistory("Ячейка изменена")}
+                            onChange={(e) => updateTableCell(selectedId, ri, ci, e.target.value)}
+                            onBlur={() => saveToHistory('Ячейка изменена')}
                             className={cn(
-                              "h-8 text-xs",
-                              ri === 0 &&
-                                selectedTable.headerRow &&
-                                "font-semibold",
+                              'h-8 text-xs',
+                              ri === 0 && selectedTable.headerRow && 'font-semibold'
                             )}
                             data-testid={`input-cell-${ri}-${ci}`}
                           />
@@ -398,12 +361,8 @@ export function Inspector() {
                   <Input
                     type="number"
                     value={Math.round(selectedTable.x)}
-                    onChange={(e) =>
-                      updateTable(selectedId, {
-                        x: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Позиция изменена")}
+                    onChange={(e) => updateTable(selectedId, { x: parseInt(e.target.value) || 0 })}
+                    onBlur={() => saveToHistory('Позиция изменена')}
                     data-testid="input-table-pos-x"
                   />
                 </div>
@@ -412,46 +371,30 @@ export function Inspector() {
                   <Input
                     type="number"
                     value={Math.round(selectedTable.y)}
-                    onChange={(e) =>
-                      updateTable(selectedId, {
-                        y: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Позиция изменена")}
+                    onChange={(e) => updateTable(selectedId, { y: parseInt(e.target.value) || 0 })}
+                    onBlur={() => saveToHistory('Позиция изменена')}
                     data-testid="input-table-pos-y"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Ширина
-                  </Label>
+                  <Label className="text-xs text-muted-foreground">Ширина</Label>
                   <Input
                     type="number"
                     value={Math.round(selectedTable.w)}
-                    onChange={(e) =>
-                      updateTable(selectedId, {
-                        w: parseInt(e.target.value) || 80,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Размер изменен")}
+                    onChange={(e) => updateTable(selectedId, { w: parseInt(e.target.value) || 80 })}
+                    onBlur={() => saveToHistory('Размер изменен')}
                     data-testid="input-table-width"
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Высота
-                  </Label>
+                  <Label className="text-xs text-muted-foreground">Высота</Label>
                   <Input
                     type="number"
                     value={Math.round(selectedTable.h)}
-                    onChange={(e) =>
-                      updateTable(selectedId, {
-                        h: parseInt(e.target.value) || 30,
-                      })
-                    }
-                    onBlur={() => saveToHistory("Размер изменен")}
+                    onChange={(e) => updateTable(selectedId, { h: parseInt(e.target.value) || 30 })}
+                    onBlur={() => saveToHistory('Размер изменен')}
                     data-testid="input-table-height"
                   />
                 </div>
