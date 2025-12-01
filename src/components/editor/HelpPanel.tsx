@@ -14,20 +14,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import {
-  Keyboard,
-  Mouse,
-  Type,
-  Image,
-  Table2,
-  Save,
-  Download,
-  Undo2,
-  Redo2,
-  Trash2,
-  Move,
-  Maximize2,
-} from 'lucide-react';
+import { Keyboard, Mouse, Type, Image, Table2, Save, Undo2, Maximize2 } from 'lucide-react';
 
 const helpSections = [
   {

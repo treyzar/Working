@@ -14,7 +14,6 @@ import {
   BookOpen,
   Settings,
   Trash2,
-  Plus,
 } from 'lucide-react';
 
 interface ToolbarProps {
