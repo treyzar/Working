@@ -15,10 +15,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Frontend"
+args = "Start application"
 
 [[workflows.workflow]]
-name = "Frontend"
+name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
@@ -34,10 +34,11 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 34907
-externalPort = 3001
+localPort = 41921
+externalPort = 3000
 
 [deployment]
-deploymentTarget = "static"
+deploymentTarget = "autoscale"
 build = ["npm", "run", "build"]
 publicDir = "dist"
+run = ["npm", "run", "start"]
