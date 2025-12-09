@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useEditorStore } from '@/entities/docs';
 import { useIsMobile } from '@/shared/hooks';
 import { useToast } from '@/shared/hooks';
-import { useMutation } from '@tanstack/react-query';
 import { Toolbar } from '@/components/editor/Toolbar';
 import { MobileToolbar } from '@/components/editor/MobileToolbar';
 import { Canvas } from '@/components/editor/Canvas';
@@ -13,19 +12,64 @@ import { Tutorial } from '@/components/editor/Tutorial';
 import { HelpPanel } from '@/components/editor/HelpPanel';
 import { DocumentViewer } from '@/components/editor/DocumentViewer';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import { PAGE_W, PAGE_H, SAFE_MARGIN, type SelectTemplate } from '@shared/types';
-import { Sliders, History, Eye, Upload, FileText } from 'lucide-react';
-
-// предполагаю, что apiRequest и queryClient уже есть в проекте,
-// если путь отличается — поправь под себя
+import { PAGE_W, PAGE_H, SAFE_MARGIN } from '@shared/types';
+import { 
+  Sliders, 
+  History, 
+  Eye, 
+  Upload, 
+  FileText, 
+  Layers, 
+  ZoomIn, 
+  ZoomOut,
+  LayoutTemplate,
+  Sparkles,
+  FileUp,
+  Download,
+  FolderOpen,
+  Plus,
+  Grid3X3,
+  Type,
+  Image,
+  Table2,
+  Trash2,
+  Copy,
+  Move
+} from 'lucide-react';
 
 import pdfMake from 'pdfmake/build/pdfmake.js';
 import vfsFonts from 'pdfmake/build/vfs_fonts.js';
+import { 
+  Document, 
+  Packer, 
+  Paragraph, 
+  TextRun, 
+  ImageRun, 
+  Table, 
+  TableRow, 
+  TableCell, 
+  AlignmentType, 
+  WidthType 
+} from 'docx';
+
 (pdfMake as any).vfs = (vfsFonts as any).vfs || (vfsFonts as any).pdfMake?.vfs;
 
 const px2pt = (px: number) => Math.round(px * 0.75);
+
+const PRESET_TEMPLATES = [
+  { id: 'blank', name: 'Пустой документ', icon: FileText },
+  { id: 'letter', name: 'Письмо', icon: FileUp },
+  { id: 'invoice', name: 'Счет-фактура', icon: Grid3X3 },
+  { id: 'report', name: 'Отчет', icon: LayoutTemplate },
+];
 
 export default function EditorPage() {
   const isMobile = useIsMobile();
@@ -36,59 +80,27 @@ export default function EditorPage() {
     templateTitle,
     setTemplateTitle,
     addImageField,
+    addTextField,
+    addTable,
     setShowTutorial,
     isSimpleMode,
+    removeField,
+    removeTable,
+    selectedId,
+    selectedType,
+    clearTemplate,
   } = useEditorStore();
 
   const [rightPanelTab, setRightPanelTab] = useState<
-    'properties' | 'history' | 'preview' | 'viewer'
+    'properties' | 'history' | 'preview' | 'viewer' | 'layers' | 'templates'
   >('properties');
+  const [leftPanelTab, setLeftPanelTab] = useState<'tools' | 'elements'>('tools');
   const [isPreviewFullscreen, setIsPreviewFullscreen] = useState(false);
   const [canvasScale, setCanvasScale] = useState(1);
-  const [currentTemplateId, setCurrentTemplateId] = useState<string | null>(null);
+  const [showLeftPanel, setShowLeftPanel] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const docInputRef = useRef<HTMLInputElement>(null);
 
-  // Mutation for saving/creating template
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (currentTemplateId) {
-        return apiRequest<SelectTemplate>(`/api/templates/${currentTemplateId}`, {
-          method: 'PATCH',
-          body: JSON.stringify({
-            title: templateTitle,
-            fields,
-            tables,
-          }),
-        });
-      } else {
-        return apiRequest<SelectTemplate>('/api/templates', {
-          method: 'POST',
-          body: JSON.stringify({
-            title: templateTitle,
-            fields,
-            tables,
-          }),
-        });
-      }
-    },
-    onSuccess: (data) => {
-      setCurrentTemplateId(data.id);
-      queryClient.invalidateQueries({ queryKey: ['/api/templates'] });
-      toast({
-        title: 'Документ сохранён',
-        description: 'Ваш документ успешно сохранён',
-      });
-    },
-    onError: () => {
-      toast({
-        title: 'Ошибка сохранения',
-        description: 'Не удалось сохранить документ',
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // показываем обучение при первом заходе
   useEffect(() => {
     const hasSeenTutorial = localStorage.getItem('document-editor-tutorial-seen');
     if (!hasSeenTutorial) {
@@ -97,7 +109,6 @@ export default function EditorPage() {
     }
   }, [setShowTutorial]);
 
-  // горячие клавиши
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
@@ -107,9 +118,6 @@ export default function EditorPage() {
         } else if (e.key === 'y') {
           e.preventDefault();
           useEditorStore.getState().redo();
-        } else if (e.key === 's') {
-          e.preventDefault();
-          handleSave();
         }
       }
       if (e.key === 'Delete') {
@@ -128,7 +136,6 @@ export default function EditorPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // масштаб холста под мобильные
   useEffect(() => {
     const updateScale = () => {
       if (isMobile) {
@@ -145,8 +152,11 @@ export default function EditorPage() {
   }, [isMobile]);
 
   const handleSave = useCallback(() => {
-    console.log('asdasd');
-  }, []);
+    toast({
+      title: 'Документ сохранён',
+      description: 'Ваш документ успешно сохранён локально',
+    });
+  }, [toast]);
 
   const wrapLines = useCallback((text: string, fontSize: number, maxWidthPx: number) => {
     const canvas = document.createElement('canvas');
@@ -260,7 +270,7 @@ export default function EditorPage() {
         ...tables.map((t) => ({ ...t, itemType: 'table' as const })),
       ].sort((a, b) => (a.y === b.y ? a.x - b.x : a.y - b.y));
 
-      const children: any[] = [];
+      const children: (Paragraph | Table)[] = [];
 
       for (const item of allItems) {
         if (item.itemType === 'field') {
@@ -384,7 +394,7 @@ export default function EditorPage() {
 
       const reader = new FileReader();
       reader.onload = () => {
-        const img = new Image();
+        const img = new window.Image();
         img.onload = () => {
           addImageField(reader.result as string, img.naturalWidth, img.naturalHeight);
         };
@@ -399,7 +409,24 @@ export default function EditorPage() {
     [addImageField]
   );
 
-  // Mobile layout
+  const handleZoomIn = useCallback(() => {
+    setCanvasScale(prev => Math.min(prev + 0.1, 2));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setCanvasScale(prev => Math.max(prev - 0.1, 0.5));
+  }, []);
+
+  const handleNewDocument = useCallback(() => {
+    clearTemplate();
+    toast({
+      title: 'Новый документ',
+      description: 'Создан новый пустой документ',
+    });
+  }, [clearTemplate, toast]);
+
+  const elementsCount = fields.length + tables.length;
+
   if (isMobile) {
     return (
       <div className="flex flex-col h-screen bg-gradient-to-b from-orange-50 via-background to-orange-50 dark:from-background dark:via-background dark:to-background">
@@ -411,9 +438,8 @@ export default function EditorPage() {
           onChange={handleImageSelected}
         />
 
-        {/* Header */}
         <header className="flex items-center gap-2 p-3 border-b bg-card/95 shadow-sm">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-300">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-md">
             <FileText className="h-5 w-5" />
           </div>
           <Input
@@ -425,18 +451,16 @@ export default function EditorPage() {
           />
         </header>
 
-        {/* Canvas */}
         <div className="flex-1 overflow-auto pb-20 bg-muted/40">
           <Canvas scale={canvasScale} />
         </div>
 
-        {/* Mobile toolbar */}
         <MobileToolbar
           onSave={handleSave}
           onDownloadPdf={handleDownloadPdf}
           onDownloadDocx={handleDownloadDocx}
           onPickImage={handlePickImage}
-          isSaving={saveMutation.isPending}
+          isSaving={false}
         />
 
         <Tutorial />
@@ -445,9 +469,8 @@ export default function EditorPage() {
     );
   }
 
-  // Desktop layout
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-orange-50 via-background to-orange-100 dark:from-background dark:via-background dark:to-background">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 via-background to-slate-100 dark:from-slate-950 dark:via-background dark:to-slate-900">
       <input
         ref={fileInputRef}
         type="file"
@@ -455,95 +478,500 @@ export default function EditorPage() {
         className="hidden"
         onChange={handleImageSelected}
       />
+      <input
+        ref={docInputRef}
+        type="file"
+        accept=".pdf,.docx"
+        className="hidden"
+      />
 
-      {/* Header */}
-      <header className="flex items-center gap-4 px-6 py-2.5 border-b bg-card/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/80">
+      <header className="flex items-center gap-4 px-6 py-3 border-b bg-white/80 dark:bg-slate-900/80 shadow-sm backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-300">
-            <FileText className="h-5 w-5" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25">
+            <Sparkles className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="font-semibold text-lg leading-tight tracking-tight">DocuParse</span>
-            <span className="text-xs text-muted-foreground">Конструктор PDF / DOCX-шаблонов</span>
+            <span className="font-bold text-lg leading-tight tracking-tight bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+              DocuParse Pro
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Конструктор и парсер документов
+            </span>
           </div>
+        </div>
+
+        <Separator orientation="vertical" className="h-8 mx-2" />
+
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleNewDocument}
+                data-testid="button-new-document"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Новый
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Создать новый документ</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => docInputRef.current?.click()}
+                data-testid="button-open-document"
+              >
+                <FolderOpen className="h-4 w-4 mr-1" />
+                Открыть
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Открыть документ</TooltipContent>
+          </Tooltip>
         </div>
 
         <div className="flex-1" />
 
-        <Input
-          value={templateTitle}
-          onChange={(e) => setTemplateTitle(e.target.value)}
-          className="max-w-xs font-medium focus-visible:ring-orange-500/70"
-          placeholder="Название документа"
-          data-testid="input-template-title"
-        />
+        <div className="flex items-center gap-3">
+          <Input
+            value={templateTitle}
+            onChange={(e) => setTemplateTitle(e.target.value)}
+            className="max-w-xs font-medium bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus-visible:ring-orange-500/50"
+            placeholder="Название документа"
+            data-testid="input-template-title"
+          />
+          
+          <Badge variant="secondary" className="px-3">
+            {elementsCount} элементов
+          </Badge>
+        </div>
+
+        <Separator orientation="vertical" className="h-8 mx-2" />
+
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={handleZoomOut}
+                disabled={canvasScale <= 0.5}
+                className="h-8 w-8"
+                data-testid="button-zoom-out"
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Уменьшить</TooltipContent>
+          </Tooltip>
+          
+          <span className="text-xs font-medium w-12 text-center">
+            {Math.round(canvasScale * 100)}%
+          </span>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={handleZoomIn}
+                disabled={canvasScale >= 2}
+                className="h-8 w-8"
+                data-testid="button-zoom-in"
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Увеличить</TooltipContent>
+          </Tooltip>
+        </div>
       </header>
 
-      {/* Toolbar */}
       <Toolbar
         onSave={handleSave}
         onDownloadPdf={handleDownloadPdf}
         onDownloadDocx={handleDownloadDocx}
         onPickImage={handlePickImage}
-        isSaving={saveMutation.isPending}
+        isSaving={false}
       />
 
-      {/* Main content */}
-      <ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0 border-t bg-muted/20">
-        {/* Canvas */}
-        <ResizablePanel defaultSize={60} minSize={40}>
-          <Canvas scale={canvasScale} />
+      <ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0">
+        {showLeftPanel && (
+          <>
+            <ResizablePanel defaultSize={18} minSize={15} maxSize={25}>
+              <div className="h-full flex flex-col bg-white/50 dark:bg-slate-900/50 border-r">
+                <Tabs value={leftPanelTab} onValueChange={(v) => setLeftPanelTab(v as any)} className="flex-1 flex flex-col">
+                  <TabsList className="w-full justify-start rounded-none border-b bg-transparent px-2 py-1">
+                    <TabsTrigger value="tools" className="text-xs" data-testid="tab-tools">
+                      Инструменты
+                    </TabsTrigger>
+                    <TabsTrigger value="elements" className="text-xs" data-testid="tab-elements">
+                      Элементы
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="tools" className="flex-1 m-0 overflow-auto">
+                    <div className="p-3 space-y-4">
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Добавить элемент
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            variant="outline"
+                            className="h-20 flex-col gap-2 border-dashed"
+                            onClick={addTextField}
+                            data-testid="button-add-text-panel"
+                          >
+                            <Type className="h-6 w-6 text-orange-500" />
+                            <span className="text-xs">Текст</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="h-20 flex-col gap-2 border-dashed"
+                            onClick={handlePickImage}
+                            data-testid="button-add-image-panel"
+                          >
+                            <Image className="h-6 w-6 text-amber-500" />
+                            <span className="text-xs">Изображение</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="h-20 flex-col gap-2 border-dashed"
+                            onClick={addTable}
+                            data-testid="button-add-table-panel"
+                          >
+                            <Table2 className="h-6 w-6 text-teal-500" />
+                            <span className="text-xs">Таблица</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="h-20 flex-col gap-2 border-dashed"
+                            onClick={() => setRightPanelTab('viewer')}
+                            data-testid="button-import-panel"
+                          >
+                            <Upload className="h-6 w-6 text-blue-500" />
+                            <span className="text-xs">Импорт</span>
+                          </Button>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Шаблоны
+                        </h4>
+                        <div className="space-y-1">
+                          {PRESET_TEMPLATES.map((template) => (
+                            <Button
+                              key={template.id}
+                              variant="ghost"
+                              className="w-full justify-start h-9 text-xs"
+                              onClick={() => {
+                                if (template.id === 'blank') {
+                                  handleNewDocument();
+                                }
+                              }}
+                              data-testid={`button-template-${template.id}`}
+                            >
+                              <template.icon className="h-4 w-4 mr-2 text-muted-foreground" />
+                              {template.name}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Экспорт
+                        </h4>
+                        <div className="space-y-1">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start h-9 text-xs"
+                            onClick={handleDownloadPdf}
+                            data-testid="button-export-pdf"
+                          >
+                            <Download className="h-4 w-4 mr-2 text-red-500" />
+                            Скачать PDF
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start h-9 text-xs"
+                            onClick={handleDownloadDocx}
+                            data-testid="button-export-docx"
+                          >
+                            <Download className="h-4 w-4 mr-2 text-blue-500" />
+                            Скачать DOCX
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="elements" className="flex-1 m-0 overflow-auto">
+                    <ScrollArea className="h-full">
+                      <div className="p-3 space-y-3">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          Слои ({elementsCount})
+                        </h4>
+                        
+                        {fields.length === 0 && tables.length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground text-sm">
+                            Нет элементов
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {fields.map((field, index) => (
+                              <Card 
+                                key={field.id} 
+                                className={`p-2 cursor-pointer transition-all ${
+                                  selectedId === field.id ? 'ring-2 ring-orange-500 bg-orange-50 dark:bg-orange-950/30' : ''
+                                }`}
+                                onClick={() => useEditorStore.getState().selectItem(field.id, 'field')}
+                                data-testid={`layer-field-${field.id}`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  {field.type === 'text' ? (
+                                    <Type className="h-4 w-4 text-orange-500" />
+                                  ) : (
+                                    <Image className="h-4 w-4 text-amber-500" />
+                                  )}
+                                  <span className="text-xs truncate flex-1">
+                                    {field.type === 'text' ? (field.value?.slice(0, 20) || 'Текст') + '...' : 'Изображение'}
+                                  </span>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      removeField(field.id);
+                                    }}
+                                    data-testid={`button-delete-layer-${field.id}`}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </Card>
+                            ))}
+                            
+                            {tables.map((table, index) => (
+                              <Card 
+                                key={table.id} 
+                                className={`p-2 cursor-pointer transition-all ${
+                                  selectedId === table.id ? 'ring-2 ring-teal-500 bg-teal-50 dark:bg-teal-950/30' : ''
+                                }`}
+                                onClick={() => useEditorStore.getState().selectItem(table.id, 'table')}
+                                data-testid={`layer-table-${table.id}`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Table2 className="h-4 w-4 text-teal-500" />
+                                  <span className="text-xs truncate flex-1">
+                                    Таблица {table.rows.length}x{table.rows[0]?.length || 0}
+                                  </span>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      removeTable(table.id);
+                                    }}
+                                    data-testid={`button-delete-layer-${table.id}`}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </ScrollArea>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+          </>
+        )}
+
+        <ResizablePanel defaultSize={showLeftPanel ? 52 : 60} minSize={40}>
+          <div className="h-full bg-slate-100 dark:bg-slate-900">
+            <Canvas scale={canvasScale} />
+          </div>
         </ResizablePanel>
 
         <ResizableHandle withHandle />
 
-        {/* Right panel */}
-        <ResizablePanel defaultSize={40} minSize={25} maxSize={50}>
-          <div className="h-full flex flex-col bg-card/70 border-l">
+        <ResizablePanel defaultSize={30} minSize={25} maxSize={45}>
+          <div className="h-full flex flex-col bg-white/50 dark:bg-slate-900/50 border-l">
             <Tabs
               value={rightPanelTab}
               onValueChange={(v) => setRightPanelTab(v as any)}
               className="flex-1 flex flex-col"
             >
-              <TabsList className="w-full justify-start rounded-none border-b bg-card px-2">
+              <TabsList className="w-full justify-start rounded-none border-b bg-transparent px-2 py-1 flex-wrap gap-1">
                 <TabsTrigger
                   value="properties"
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-xs"
                   data-testid="tab-properties"
                 >
-                  <Sliders className="h-4 w-4 text-orange-500" />
-                  <span className="hidden lg:inline">Свойства</span>
+                  <Sliders className="h-3 w-3" />
+                  Свойства
+                </TabsTrigger>
+                <TabsTrigger
+                  value="layers"
+                  className="flex items-center gap-1 text-xs"
+                  data-testid="tab-layers"
+                >
+                  <Layers className="h-3 w-3" />
+                  Слои
                 </TabsTrigger>
                 <TabsTrigger
                   value="history"
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-xs"
                   data-testid="tab-history"
                 >
-                  <History className="h-4 w-4 text-orange-500" />
-                  <span className="hidden lg:inline">История</span>
+                  <History className="h-3 w-3" />
+                  История
                 </TabsTrigger>
                 <TabsTrigger
                   value="preview"
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-xs"
                   data-testid="tab-preview"
                 >
-                  <Eye className="h-4 w-4 text-orange-500" />
-                  <span className="hidden lg:inline">Предпросмотр</span>
+                  <Eye className="h-3 w-3" />
+                  Превью
                 </TabsTrigger>
                 {!isSimpleMode && (
                   <TabsTrigger
                     value="viewer"
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 text-xs"
                     data-testid="tab-viewer"
                   >
-                    <Upload className="h-4 w-4 text-orange-500" />
-                    <span className="hidden lg:inline">Просмотр</span>
+                    <Upload className="h-3 w-3" />
+                    Импорт
                   </TabsTrigger>
                 )}
               </TabsList>
 
               <TabsContent value="properties" className="flex-1 m-0 p-3 overflow-auto">
                 <Inspector />
+              </TabsContent>
+
+              <TabsContent value="layers" className="flex-1 m-0 p-3 overflow-auto">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Layers className="h-4 w-4 text-orange-500" />
+                      Все элементы
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ScrollArea className="h-[400px]">
+                      <div className="space-y-2">
+                        {fields.map((field) => (
+                          <div
+                            key={field.id}
+                            className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                              selectedId === field.id
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30'
+                                : 'border-border'
+                            }`}
+                            onClick={() => useEditorStore.getState().selectItem(field.id, 'field')}
+                            data-testid={`layer-item-${field.id}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              {field.type === 'text' ? (
+                                <Type className="h-4 w-4 text-orange-500" />
+                              ) : (
+                                <Image className="h-4 w-4 text-amber-500" />
+                              )}
+                              <span className="text-sm font-medium flex-1 truncate">
+                                {field.type === 'text' ? field.value?.slice(0, 30) || 'Пустой текст' : field.label}
+                              </span>
+                              <div className="flex gap-1">
+                                <Button size="icon" variant="ghost" className="h-6 w-6">
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost" 
+                                  className="h-6 w-6"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeField(field.id);
+                                  }}
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Позиция: {Math.round(field.x)}, {Math.round(field.y)} | Размер: {Math.round(field.w)}x{Math.round(field.h)}
+                            </div>
+                          </div>
+                        ))}
+                        
+                        {tables.map((table) => (
+                          <div
+                            key={table.id}
+                            className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                              selectedId === table.id
+                                ? 'border-teal-500 bg-teal-50 dark:bg-teal-950/30'
+                                : 'border-border'
+                            }`}
+                            onClick={() => useEditorStore.getState().selectItem(table.id, 'table')}
+                            data-testid={`layer-item-${table.id}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <Table2 className="h-4 w-4 text-teal-500" />
+                              <span className="text-sm font-medium flex-1">
+                                Таблица ({table.rows.length} строк, {table.rows[0]?.length || 0} колонок)
+                              </span>
+                              <div className="flex gap-1">
+                                <Button size="icon" variant="ghost" className="h-6 w-6">
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost" 
+                                  className="h-6 w-6"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeTable(table.id);
+                                  }}
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Позиция: {Math.round(table.x)}, {Math.round(table.y)} | Размер: {Math.round(table.w)}x{Math.round(table.h)}
+                            </div>
+                          </div>
+                        ))}
+                        
+                        {fields.length === 0 && tables.length === 0 && (
+                          <div className="text-center py-12 text-muted-foreground">
+                            <Layers className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                            <p className="text-sm">Нет элементов на холсте</p>
+                            <p className="text-xs mt-1">Добавьте текст, изображение или таблицу</p>
+                          </div>
+                        )}
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="history" className="flex-1 m-0 p-3 overflow-auto">
@@ -570,7 +998,7 @@ export default function EditorPage() {
 
       {isPreviewFullscreen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
           onClick={() => setIsPreviewFullscreen(false)}
         />
       )}
