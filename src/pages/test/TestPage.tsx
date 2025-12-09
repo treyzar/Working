@@ -20,7 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import { PAGE_W, PAGE_H, SAFE_MARGIN } from '@shared/types';
+import { PAGE_W, PAGE_H, SAFE_MARGIN, type Field, type TableItem } from '@shared/types';
 import { 
   Sliders, 
   History, 
@@ -70,6 +70,158 @@ const PRESET_TEMPLATES = [
   { id: 'invoice', name: 'Счет-фактура', icon: Grid3X3 },
   { id: 'report', name: 'Отчет', icon: LayoutTemplate },
 ];
+
+const TEMPLATE_DATA: Record<string, { fields: Field[], tables: TableItem[], title: string }> = {
+  letter: {
+    title: 'Официальное письмо',
+    fields: [
+      {
+        id: 'letter-1',
+        type: 'text',
+        label: 'Получатель',
+        value: 'Директору ООО "Компания"\nИванову И.И.',
+        x: 56, y: 56, w: 300, h: 60,
+        fontSize: 14, bold: false, italic: false, align: 'left'
+      },
+      {
+        id: 'letter-2',
+        type: 'text',
+        label: 'Дата',
+        value: new Date().toLocaleDateString('ru-RU'),
+        x: 400, y: 56, w: 150, h: 30,
+        fontSize: 12, bold: false, italic: false, align: 'right'
+      },
+      {
+        id: 'letter-3',
+        type: 'text',
+        label: 'Заголовок',
+        value: 'О направлении документов',
+        x: 56, y: 150, w: 500, h: 40,
+        fontSize: 16, bold: true, italic: false, align: 'center'
+      },
+      {
+        id: 'letter-4',
+        type: 'text',
+        label: 'Тело письма',
+        value: 'Уважаемый Иван Иванович!\n\nНаправляем Вам запрашиваемые документы согласно договору.\n\nПриложение: на 5 листах.',
+        x: 56, y: 210, w: 500, h: 150,
+        fontSize: 14, bold: false, italic: false, align: 'left'
+      },
+      {
+        id: 'letter-5',
+        type: 'text',
+        label: 'Подпись',
+        value: 'С уважением,\nГенеральный директор _________________ Петров П.П.',
+        x: 56, y: 400, w: 400, h: 60,
+        fontSize: 14, bold: false, italic: false, align: 'left'
+      }
+    ],
+    tables: []
+  },
+  invoice: {
+    title: 'Счет-фактура',
+    fields: [
+      {
+        id: 'inv-1',
+        type: 'text',
+        label: 'Заголовок',
+        value: 'СЧЕТ-ФАКТУРА № ___',
+        x: 56, y: 56, w: 500, h: 40,
+        fontSize: 20, bold: true, italic: false, align: 'center'
+      },
+      {
+        id: 'inv-2',
+        type: 'text',
+        label: 'Дата',
+        value: `от ${new Date().toLocaleDateString('ru-RU')}`,
+        x: 56, y: 100, w: 500, h: 30,
+        fontSize: 14, bold: false, italic: false, align: 'center'
+      },
+      {
+        id: 'inv-3',
+        type: 'text',
+        label: 'Поставщик',
+        value: 'Поставщик: ООО "Поставщик"\nИНН: 1234567890\nАдрес: г. Москва, ул. Примерная, д. 1',
+        x: 56, y: 150, w: 250, h: 80,
+        fontSize: 12, bold: false, italic: false, align: 'left'
+      },
+      {
+        id: 'inv-4',
+        type: 'text',
+        label: 'Покупатель',
+        value: 'Покупатель: ООО "Покупатель"\nИНН: 0987654321\nАдрес: г. Москва, ул. Другая, д. 2',
+        x: 320, y: 150, w: 250, h: 80,
+        fontSize: 12, bold: false, italic: false, align: 'left'
+      },
+      {
+        id: 'inv-5',
+        type: 'text',
+        label: 'Итого',
+        value: 'ИТОГО: 150 000,00 руб.',
+        x: 56, y: 450, w: 500, h: 40,
+        fontSize: 16, bold: true, italic: false, align: 'right'
+      }
+    ],
+    tables: [
+      {
+        id: 'inv-t1',
+        rows: [
+          ['№', 'Наименование', 'Кол-во', 'Ед.', 'Цена', 'Сумма'],
+          ['1', 'Товар А', '10', 'шт.', '5 000', '50 000'],
+          ['2', 'Услуга Б', '1', 'усл.', '100 000', '100 000']
+        ],
+        x: 56, y: 260, w: 500, h: 150,
+        headerRow: true, borderStyle: 'full'
+      }
+    ]
+  },
+  report: {
+    title: 'Отчет',
+    fields: [
+      {
+        id: 'rep-1',
+        type: 'text',
+        label: 'Заголовок',
+        value: 'ОТЧЕТ',
+        x: 56, y: 56, w: 500, h: 50,
+        fontSize: 24, bold: true, italic: false, align: 'center'
+      },
+      {
+        id: 'rep-2',
+        type: 'text',
+        label: 'Подзаголовок',
+        value: 'о проделанной работе за период',
+        x: 56, y: 110, w: 500, h: 30,
+        fontSize: 14, bold: false, italic: true, align: 'center'
+      },
+      {
+        id: 'rep-3',
+        type: 'text',
+        label: 'Введение',
+        value: '1. Введение\n\nВ данном отчете представлены результаты работы за отчетный период.',
+        x: 56, y: 160, w: 500, h: 80,
+        fontSize: 14, bold: false, italic: false, align: 'left'
+      },
+      {
+        id: 'rep-4',
+        type: 'text',
+        label: 'Основная часть',
+        value: '2. Основная часть\n\nВыполненные задачи:\n• Задача 1 - выполнена\n• Задача 2 - в процессе\n• Задача 3 - запланирована',
+        x: 56, y: 260, w: 500, h: 120,
+        fontSize: 14, bold: false, italic: false, align: 'left'
+      },
+      {
+        id: 'rep-5',
+        type: 'text',
+        label: 'Заключение',
+        value: '3. Заключение\n\nВсе поставленные цели достигнуты в полном объеме.',
+        x: 56, y: 400, w: 500, h: 80,
+        fontSize: 14, bold: false, italic: false, align: 'left'
+      }
+    ],
+    tables: []
+  }
+};
 
 export default function EditorPage() {
   const isMobile = useIsMobile();
@@ -675,6 +827,13 @@ export default function EditorPage() {
                               onClick={() => {
                                 if (template.id === 'blank') {
                                   handleNewDocument();
+                                } else if (TEMPLATE_DATA[template.id]) {
+                                  const data = TEMPLATE_DATA[template.id];
+                                  useEditorStore.getState().loadTemplate(data.fields, data.tables, data.title);
+                                  toast({
+                                    title: 'Шаблон загружен',
+                                    description: `Загружен шаблон "${template.name}"`,
+                                  });
                                 }
                               }}
                               data-testid={`button-template-${template.id}`}
