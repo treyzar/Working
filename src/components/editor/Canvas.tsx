@@ -1,4 +1,5 @@
 import { useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEditorStore } from '@/entities/docs';
 import { PAGE_W, PAGE_H, SAFE_MARGIN, GRID, type Field, type TableItem } from '@shared/types';
 import { cn } from '@/lib/utils';
@@ -299,10 +300,23 @@ export function Canvas({ scale = 1 }: CanvasProps) {
   }, []);
 
   return (
-    <div className="relative flex-1 overflow-auto bg-muted/30 p-8" onClick={handleCanvasClick}>
-      <div
+    <div 
+      className="relative flex-1 overflow-auto p-8" 
+      onClick={handleCanvasClick}
+      style={{
+        backgroundImage: `
+          radial-gradient(circle at 1px 1px, hsl(var(--border) / 0.3) 1px, transparent 0)
+        `,
+        backgroundSize: '20px 20px',
+        backgroundColor: 'hsl(var(--muted) / 0.4)',
+      }}
+    >
+      <motion.div
         ref={pageRef}
-        className="canvas-page relative mx-auto bg-white shadow-xl"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="canvas-page relative mx-auto bg-white dark:bg-slate-50 shadow-2xl rounded-sm"
         style={{
           width: PAGE_W * scale,
           height: PAGE_H * scale,
@@ -351,134 +365,156 @@ export function Canvas({ scale = 1 }: CanvasProps) {
         ))}
 
         {/* Fields */}
-        {fields.map((field) => {
-          const isSelected = selectedId === field.id && selectedType === 'field';
+        <AnimatePresence>
+          {fields.map((field) => {
+            const isSelected = selectedId === field.id && selectedType === 'field';
 
-          return (
-            <div
-              key={field.id}
-              className={cn(
-                'absolute cursor-move select-none transition-shadow',
-                isSelected && 'ring-2 ring-primary ring-offset-2'
-              )}
-              style={{
-                left: field.x,
-                top: field.y,
-                width: field.w,
-                height: field.h,
-              }}
-              onMouseDown={(e) => onMouseDownBox(e, field, 'field', false)}
-              onTouchStart={(e) => onMouseDownBox(e, field, 'field', false)}
-              data-testid={`field-${field.id}`}
-            >
-              {field.type === 'text' && (
-                <div
-                  className="w-full h-full p-2 overflow-hidden bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/50 rounded-md shadow-sm transition-all duration-200"
-                  style={{
-                    fontSize: field.fontSize || 14,
-                    fontWeight: field.bold ? 'bold' : 'normal',
-                    fontStyle: field.italic ? 'italic' : 'normal',
-                    textAlign: field.align || 'left',
-                  }}
-                >
-                  {field.value}
-                </div>
-              )}
+            return (
+              <motion.div
+                key={field.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className={cn(
+                  'absolute cursor-move select-none',
+                  isSelected && 'ring-2 ring-primary ring-offset-2 shadow-lg'
+                )}
+                style={{
+                  left: field.x,
+                  top: field.y,
+                  width: field.w,
+                  height: field.h,
+                }}
+                onMouseDown={(e) => onMouseDownBox(e, field, 'field', false)}
+                onTouchStart={(e) => onMouseDownBox(e, field, 'field', false)}
+                data-testid={`field-${field.id}`}
+              >
+                {field.type === 'text' && (
+                  <div
+                    className="w-full h-full p-2 overflow-hidden bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/30 border border-orange-200/80 dark:border-orange-800/50 rounded-lg shadow-sm backdrop-blur-sm transition-all duration-200"
+                    style={{
+                      fontSize: field.fontSize || 14,
+                      fontWeight: field.bold ? 'bold' : 'normal',
+                      fontStyle: field.italic ? 'italic' : 'normal',
+                      textAlign: field.align || 'left',
+                    }}
+                  >
+                    {field.value}
+                  </div>
+                )}
 
-              {field.type === 'image' && field.dataUrl && (
-                <img
-                  src={field.dataUrl}
-                  alt={field.label}
-                  className="w-full h-full object-contain bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-md shadow-sm"
-                  draggable={false}
-                />
-              )}
+                {field.type === 'image' && field.dataUrl && (
+                  <img
+                    src={field.dataUrl}
+                    alt={field.label}
+                    className="w-full h-full object-contain bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/30 border border-amber-200/80 dark:border-amber-800/50 rounded-lg shadow-sm"
+                    draggable={false}
+                  />
+                )}
 
-              {/* Resize handle */}
-              {isSelected && (
-                <div
-                  className="absolute -right-2 -bottom-2 w-4 h-4 bg-primary rounded-full cursor-se-resize touch-manipulation"
-                  style={{ minWidth: 16, minHeight: 16 }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                    onMouseDownBox(e, field, 'field', true);
-                  }}
-                  onTouchStart={(e) => {
-                    e.stopPropagation();
-                    onMouseDownBox(e, field, 'field', true);
-                  }}
-                  data-testid={`resize-handle-${field.id}`}
-                />
-              )}
-            </div>
-          );
-        })}
+                {/* Resize handle */}
+                <AnimatePresence>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      className="absolute -right-2 -bottom-2 w-4 h-4 bg-primary rounded-full cursor-se-resize touch-manipulation shadow-md"
+                      style={{ minWidth: 16, minHeight: 16 }}
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        onMouseDownBox(e, field, 'field', true);
+                      }}
+                      onTouchStart={(e) => {
+                        e.stopPropagation();
+                        onMouseDownBox(e, field, 'field', true);
+                      }}
+                      data-testid={`resize-handle-${field.id}`}
+                    />
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
 
         {/* Tables */}
-        {tables.map((table) => {
-          const isSelected = selectedId === table.id && selectedType === 'table';
+        <AnimatePresence>
+          {tables.map((table) => {
+            const isSelected = selectedId === table.id && selectedType === 'table';
 
-          return (
-            <div
-              key={table.id}
-              className={cn(
-                'absolute cursor-move select-none transition-shadow',
-                isSelected && 'ring-2 ring-primary ring-offset-2'
-              )}
-              style={{
-                left: table.x,
-                top: table.y,
-                width: table.w,
-                height: table.h,
-              }}
-              onMouseDown={(e) => onMouseDownBox(e, table, 'table', false)}
-              onTouchStart={(e) => onMouseDownBox(e, table, 'table', false)}
-              data-testid={`table-${table.id}`}
-            >
-              <div className="w-full h-full overflow-hidden bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/50 rounded-md shadow-sm">
-                <table className="w-full h-full border-collapse text-xs">
-                  <tbody>
-                    {table.rows.map((row, ri) => (
-                      <tr key={ri}>
-                        {row.map((cell, ci) => (
-                          <td
-                            key={ci}
-                            className={cn(
-                              'border border-teal-200 dark:border-teal-700 px-1 py-0.5 truncate',
-                              ri === 0 &&
-                                table.headerRow &&
-                                'font-semibold bg-teal-100 dark:bg-teal-900/50'
-                            )}
-                          >
-                            {cell}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            return (
+              <motion.div
+                key={table.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className={cn(
+                  'absolute cursor-move select-none',
+                  isSelected && 'ring-2 ring-primary ring-offset-2 shadow-lg'
+                )}
+                style={{
+                  left: table.x,
+                  top: table.y,
+                  width: table.w,
+                  height: table.h,
+                }}
+                onMouseDown={(e) => onMouseDownBox(e, table, 'table', false)}
+                onTouchStart={(e) => onMouseDownBox(e, table, 'table', false)}
+                data-testid={`table-${table.id}`}
+              >
+                <div className="w-full h-full overflow-hidden bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/40 dark:to-emerald-950/30 border border-teal-200/80 dark:border-teal-800/50 rounded-lg shadow-sm backdrop-blur-sm">
+                  <table className="w-full h-full border-collapse text-xs">
+                    <tbody>
+                      {table.rows.map((row, ri) => (
+                        <tr key={ri}>
+                          {row.map((cell, ci) => (
+                            <td
+                              key={ci}
+                              className={cn(
+                                'border border-teal-200/60 dark:border-teal-700/60 px-1.5 py-1 truncate',
+                                ri === 0 &&
+                                  table.headerRow &&
+                                  'font-semibold bg-teal-100/80 dark:bg-teal-900/60'
+                              )}
+                            >
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-              {/* Resize handle */}
-              {isSelected && (
-                <div
-                  className="absolute -right-2 -bottom-2 w-4 h-4 bg-primary rounded-full cursor-se-resize touch-manipulation"
-                  style={{ minWidth: 16, minHeight: 16 }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                    onMouseDownBox(e, table, 'table', true);
-                  }}
-                  onTouchStart={(e) => {
-                    e.stopPropagation();
-                    onMouseDownBox(e, table, 'table', true);
-                  }}
-                  data-testid={`resize-handle-${table.id}`}
-                />
-              )}
-            </div>
-          );
-        })}
-      </div>
+                {/* Resize handle */}
+                <AnimatePresence>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      className="absolute -right-2 -bottom-2 w-4 h-4 bg-primary rounded-full cursor-se-resize touch-manipulation shadow-md"
+                      style={{ minWidth: 16, minHeight: 16 }}
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        onMouseDownBox(e, table, 'table', true);
+                      }}
+                      onTouchStart={(e) => {
+                        e.stopPropagation();
+                        onMouseDownBox(e, table, 'table', true);
+                      }}
+                      data-testid={`resize-handle-${table.id}`}
+                    />
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }
