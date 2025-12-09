@@ -1,4 +1,4 @@
-import type { ICustomNavigateButtonProps } from "../interfaces/interfaces";
+import type { ICustomNavigateButtonProps } from "@shared/types/interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
 
 const CustomNavigateButton = ({

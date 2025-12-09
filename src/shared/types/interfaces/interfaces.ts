@@ -9,7 +9,7 @@ export interface ILoginFormProps {
 export interface ICustomInputProps {
   type: string;
   classname?: string;
-  id: number | string;
+  id: string;
   hint?: string;
   label?: string;
   required?: boolean;

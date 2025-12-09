@@ -1,12 +1,15 @@
-import React, { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import Loader from "@widgets/loader/Loader";
 
-type Props = {
+interface LettersTableProps {
   tableRef: MutableRefObject<HTMLTableElement | null>;
   loading: boolean;
-};
+}
 
-export const LettersTable: React.FC<Props> = ({ tableRef, loading }) => (
+export const LettersTable: React.FC<LettersTableProps> = ({
+  tableRef,
+  loading,
+}) => (
   <div className="dt-surface">
     {loading && <Loader fullscreen />}
     <table

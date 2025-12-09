@@ -1,4 +1,4 @@
-import type { IFormProps } from "../interfaces/interfaces";
+import type { IFormProps } from "@shared/types/interfaces/interfaces";
 
 const Form = ({ children, classname, onSubmit, ...props }: IFormProps) => {
   return (

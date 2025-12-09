@@ -5,8 +5,9 @@ import type {
   UseFormClearErrors,
 } from "react-hook-form";
 import type { ILetter, IFile } from "@shared/types";
+
 export type SetErrorFn = (
-  name: keyof TAuthSchema,
+  name: keyof TAuthSchema | `root.${string}`,
   error: { type: string; message?: string },
 ) => void;
 

@@ -88,12 +88,10 @@ const Orders = () => {
       return;
     }
 
-    // Инициализация DataTable
     const dt = new DataTable(tableRef.current, {
       data: orders,
       processing: false,
       serverSide: false,
-      responsive: false,
       autoWidth: false,
       scrollX: true,
       scrollCollapse: true,

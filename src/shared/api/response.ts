@@ -76,8 +76,6 @@ const setHeader = (
   (headers as RawAxiosRequestHeaders)[name] = value;
   return headers;
 };
-const setAuthHeader = (headers: AnyHeaders, token: string): AnyHeaders =>
-  setHeader(headers, "Authorization", `Bearer ${token}`);
 const isAuthUrl = (url?: string): boolean =>
   !!url &&
   (url.includes("/users/api/login") || url.includes("/users/api/get_tokens"));
@@ -86,9 +84,7 @@ const isAuthUrl = (url?: string): boolean =>
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAccessToken();
   if (token) {
-    config.headers = setAuthHeader(config.headers, token) as
-      | AxiosHeaders
-      | RawAxiosRequestHeaders;
+    config.headers.set("Authorization", `Bearer ${token}`);
   }
   return config;
 });
@@ -121,11 +117,9 @@ export function installAuthInterceptor(queryClient: QueryClient): void {
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: (token) => {
-              original.headers = token
-                ? (setAuthHeader(original.headers, token) as
-                    | AxiosHeaders
-                    | RawAxiosRequestHeaders)
-                : original.headers;
+              if (token && original.headers) {
+                original.headers.set("Authorization", `Bearer ${token}`);
+              }
               resolve(apiClient(original));
             },
             reject,
@@ -155,9 +149,9 @@ export function installAuthInterceptor(queryClient: QueryClient): void {
 
         processQueue(null, newAccess);
 
-        original.headers = setAuthHeader(original.headers, newAccess) as
-          | AxiosHeaders
-          | RawAxiosRequestHeaders;
+        if (original.headers) {
+          original.headers.set("Authorization", `Bearer ${newAccess}`);
+        }
 
         try {
           await queryClient.invalidateQueries({ queryKey: ["profile"] });

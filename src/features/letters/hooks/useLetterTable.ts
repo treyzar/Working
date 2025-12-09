@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import $ from "jquery";
 import DT from "datatables.net-dt";
-import DataTable from "datatables.net-dt";
+import DataTable, { type Api } from "datatables.net-dt";
 import Mark from "mark.js";
 import type { MutableRefObject } from "react";
 import type { NavigateFunction } from "react-router-dom";
@@ -9,13 +9,13 @@ import { LettersTableSettings } from "@pages/letters/constants";
 
 DataTable.use(DT);
 
-type UseLettersTableParams = {
+interface UseLettersTableParams {
   tableRef: MutableRefObject<HTMLTableElement | null>;
   selectedExecutorRef: MutableRefObject<string>;
   navigate: NavigateFunction;
   onLoadingChange?: (v: boolean) => void;
   onError?: (msg: string | null) => void;
-};
+}
 
 export function useLettersTable({
   tableRef,
@@ -24,7 +24,7 @@ export function useLettersTable({
   onLoadingChange,
   onError,
 }: UseLettersTableParams) {
-  const dtRef = useRef<DataTables.Api | null>(null);
+  const dtRef = useRef<Api | null>(null);
 
   useEffect(() => {
     if (!tableRef.current) return;
@@ -82,7 +82,7 @@ export function useLettersTable({
   }, [navigate, onError, onLoadingChange, selectedExecutorRef, tableRef]);
 
   const reload = (resetPaging = false) =>
-    dtRef.current?.ajax.reload(null, !resetPaging);
+    dtRef.current?.ajax.reload(undefined, !resetPaging);
 
   return { dtRef, reload };
 }

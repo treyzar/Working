@@ -1,9 +1,10 @@
-import type { ICustomButtonProps } from "../interfaces/interfaces";
+import type { ICustomButtonProps } from "@shared/types/interfaces/interfaces";
+
 const CustomButton = ({
   title,
   type,
   classname,
-  disabled
+  disabled,
 }: ICustomButtonProps) => {
   return (
     <button type={type} className={classname} disabled={disabled}>

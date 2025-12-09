@@ -28,7 +28,7 @@ const Letters: React.FC = () => {
 
   const { data: executors = [] } = useGetExecutorUsers(true);
 
-  const { dtRef, reload } = useLettersTable({
+  const { dtRef } = useLettersTable({
     tableRef,
     selectedExecutorRef: executorRef,
     navigate,
@@ -36,7 +36,7 @@ const Letters: React.FC = () => {
     onError: setError,
   });
 
-  const handleCreated = () => dtRef.current?.ajax.reload(null, false);
+  const handleCreated = () => dtRef.current?.ajax.reload(undefined, false);
 
   return (
     <div className="letters-page">
