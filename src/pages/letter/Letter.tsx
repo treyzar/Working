@@ -9,18 +9,6 @@ export default function LetterDetails() {
     useLetterDetails(id);
   return (
     <div>
-      <style>{`
-        .container-1600 {max-width:1600px}
-        .card-dark { background-color:#2B2E31; color:#F5F7F8; border-color:#3A3D40; }
-        .card-dark .card-header { border-bottom-color:#3A3D40; background:transparent; }
-        .muted { color:#9aa1a8; }
-        .btn-accent { background-color:#E73F0C; border-color:#E73F0C; color:#fff; }
-        .btn-accent:hover { filter:brightness(0.95); color:#fff; }
-        .badge-soft { background:#EEF1F4; color:#2F3235; }
-        .form-notes { background:#F4F5F6; }
-        .icon { vertical-align: -0.2rem; }
-      `}</style>
-
       <div className="container container-1600 py-3">
         <div className="card shadow-sm border-0">
           <div className="card-body d-flex align-items-center justify-content-between py-3 px-3 px-md-4">

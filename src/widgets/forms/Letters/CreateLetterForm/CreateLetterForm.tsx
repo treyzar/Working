@@ -48,18 +48,18 @@ const CreateLetterForm = ({
         reset();
         setOpen(false);
       },
-      onError: (err: any) => {
-        const status = err?.response?.status;
-        const backend = err?.response?.data as
-          | Record<string, string | string[]>
-          | undefined;
+      onError: (err: unknown) => {
+        const axiosError = err as { response?: { status?: number; data?: Record<string, string | string[]> } };
+        const status = axiosError?.response?.status;
+        const backend = axiosError?.response?.data;
 
         if (status === 400 && backend) {
           Object.entries(backend).forEach(([field, messages]) => {
             const msg = Array.isArray(messages)
               ? messages[0]
               : String(messages);
-            if (field in (letterSchema as any).shape) {
+            const schemaShape = letterSchema.shape as Record<string, unknown>;
+            if (field in schemaShape) {
               setError(field as keyof TLetterForm, {
                 type: "server",
                 message: msg,

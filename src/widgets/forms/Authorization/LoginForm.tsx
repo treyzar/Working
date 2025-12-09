@@ -67,9 +67,8 @@ const LoginForm = () => {
 
         <div className="action-buttons">
           <Button
-            style={{ backgroundColor: "#e8450e" }}
             type={EButtonTypes.SUBMIT}
-            className="btn-primary bg-orange-600 text-white"
+            className="btn-primary btn-accent"
             disabled={isPending}
           >
             Войти

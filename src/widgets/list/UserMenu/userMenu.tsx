@@ -1,21 +1,26 @@
 import { useState } from "react";
 import "./UserMenu.scss";
 import Avatar from "react-avatar";
-import apiClient, { clearTokens } from "@shared/api/response";
+import { clearTokens, getRefreshToken } from "@shared/api/response";
+import { logoutFn } from "@shared/api/logout";
 import { useNavigate } from "react-router-dom";
 import type { IUserMenuProps } from "@shared/types/interfaces/interfaces";
 import { FaUserCircle } from "react-icons/fa";
 import { IoExitOutline } from "react-icons/io5";
+
 const UserMenu = ({ first_name, username }: IUserMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
+
   const logout = async () => {
-    const data = { refresh: localStorage.getItem("refresh") };
+    const refreshToken = getRefreshToken();
     try {
-      await apiClient.post("http://127.0.0.1:8000/users/api/logout/", data);
-    } catch (e) {
+      if (refreshToken) {
+        await logoutFn({ refresh: refreshToken });
+      }
+    } catch {
       console.warn("Logout error (token may be invalid)");
     } finally {
       clearTokens();
