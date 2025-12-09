@@ -58,6 +58,11 @@ interface EditorState {
   // Template actions
   loadTemplate: (fields: Field[], tables: TableItem[], title: string) => void;
   clearTemplate: () => void;
+
+  // Import actions
+  addTextFieldWithContent: (text: string) => void;
+  addTableWithContent: (rows: string[][]) => void;
+  importParsedContent: (textBlocks: string[], tables: string[][][]) => void;
 }
 
 let fieldIdSeq = 1;
@@ -425,5 +430,93 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       selectedType: null,
     });
     get().saveToHistory("Новый документ");
+  },
+
+  addTextFieldWithContent: (text: string) => {
+    get().importParsedContent([text], []);
+  },
+
+  addTableWithContent: (rows: string[][]) => {
+    if (rows && rows.length > 0) {
+      get().importParsedContent([], [rows]);
+    }
+  },
+
+  importParsedContent: (textBlocks, parsedTables) => {
+    const { fields, tables, saveToHistory } = get();
+    const existingItems = [...fields, ...tables];
+    let currentY = existingItems.length > 0 
+      ? Math.max(...existingItems.map(item => item.y + item.h)) + 20
+      : SAFE_MARGIN + 36;
+    
+    const newFields: Field[] = [];
+    const newTables: TableItem[] = [];
+    const spacing = 20;
+    
+    const computeRect = (estimatedHeight: number) => {
+      if (currentY + estimatedHeight > PAGE_H - SAFE_MARGIN) {
+        currentY = SAFE_MARGIN + 36;
+      }
+      return sanitizeRect(
+        SAFE_MARGIN + 36,
+        currentY,
+        PAGE_W - SAFE_MARGIN * 2 - 72,
+        estimatedHeight,
+        PAGE_W,
+        PAGE_H,
+      );
+    };
+    
+    for (const text of textBlocks) {
+      if (text.trim()) {
+        const estimatedHeight = Math.min(200, Math.max(60, text.length * 0.5));
+        const rect = computeRect(estimatedHeight);
+        
+        const id = uid();
+        newFields.push({
+          id,
+          type: "text",
+          label: "Импортированный текст",
+          value: text.trim(),
+          x: rect.x,
+          y: rect.y,
+          w: rect.w,
+          h: rect.h,
+          fontSize: 14,
+          bold: false,
+          italic: false,
+          align: "left",
+        });
+        currentY = rect.y + rect.h + spacing;
+      }
+    }
+    
+    for (const tableRows of parsedTables) {
+      if (tableRows && tableRows.length > 0) {
+        const rowHeight = 30;
+        const estimatedHeight = Math.min(400, tableRows.length * rowHeight);
+        const rect = computeRect(estimatedHeight);
+        
+        const id = tuid();
+        newTables.push({
+          id,
+          rows: tableRows,
+          x: rect.x,
+          y: rect.y,
+          w: rect.w,
+          h: rect.h,
+          headerRow: true,
+          borderStyle: "light",
+        });
+        currentY = rect.y + rect.h + spacing;
+      }
+    }
+    
+    set((state) => ({
+      fields: [...state.fields, ...newFields],
+      tables: [...state.tables, ...newTables],
+    }));
+    
+    saveToHistory("Импортирован контент из документа");
   },
 }));
